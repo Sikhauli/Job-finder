@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
-const Experience = require('../model/expModel')
-const Education = require('../model/eduModel')
+const Experience = require('../model/expModel');
+const Education = require('../model/eduModel');
 
 const userSchema = new mongoose.Schema(
     {
@@ -9,21 +9,29 @@ const userSchema = new mongoose.Schema(
             type: String,
             lowercase: true,
             trim: true,
-            required: [true, "Please enter your full name."],
-            minlength: [5, "Full name must be at least 5 characters long."],
-            maxlength: [20, "First name should not be over 20 characters long."],
+            // required: [true, "Please enter your firstname name."],
+            // minlength: [5, "Full name must be at least 5 characters long."],
+            // maxlength: [20, "First name should not be over 20 characters long."],
+        },
+        lastname: {
+            type: String,
+            lowercase: true,
+            trim: true,
+            // required: [true, "Please enter your lastname name."],
+            // minlength: [5, "Full name must be at least 5 characters long."],
+            // maxlength: [20, "First name should not be over 20 characters long."],
         },
         email: {
             type: String,
             lowercase: true,
             trim: true,
             unique: [true, "Email already exists."],
-            required: [true, "Please enter your email."],
+            // required: [true, "Please enter your email."],
             validate: [validator.isEmail, "Invalid email."],
         },
         password: {
             type: String,
-            required: [true, "Please enter a password."],
+            // required: [true, "Please enter a password."],
             minlength: [6, "Password must be at least 6 characters long."],
         },
         type: {
@@ -32,7 +40,7 @@ const userSchema = new mongoose.Schema(
             uppercase: true,
             default: "USER",
             enum: {
-                values: [ "ADMIN", "USER"],
+                values: ["ADMIN", "USER"],
                 message: "{VALUE} is an Invalid user type.",
             },
         },
@@ -49,18 +57,45 @@ const userSchema = new mongoose.Schema(
         avatar: {
             type: String,
         },
+        age: {
+            type: Number,
+            required: false,
+        },
+        experience: {
+            type: Number,
+            required: false,
+        },
+        phone: {
+            type: String,
+            required: false,
+        },
+        position: {
+            type: String,
+            required: false,
+        },
+        location: {
+            type: String,
+            required: false,
+        },
+        CTC: {
+            type: Number,
+            required: false,
+        },
+        about: {
+            type: String,
+            required: false,
+        },
         experiences: [
             {
                 type: mongoose.Schema.Types.ObjectId,
-                ref: "Experience", 
+                ref: "Experience",
             },
         ],
-       
         education: [
-                {
-                    type: mongoose.Schema.Types.ObjectId,
-                    ref: "Education",
-                },
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Education",
+            },
         ],
     },
     { timestamps: true }

@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const User = require('../model/user')
 
 const jobSchema = new mongoose.Schema(
     {
@@ -33,6 +34,11 @@ const jobSchema = new mongoose.Schema(
             required: [true, "Please provide a job period."],
             default: 'Hiring',
             enum: ["Hiring", "Expired"],
+        },
+        editor: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+            required: true,
         },
     },
     { timestamps: true }

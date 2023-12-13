@@ -26,6 +26,10 @@ const educationSchema = new mongoose.Schema({
         ref: 'User',
         required: false,
     },
+    image: {
+        type: String, 
+        required: true,
+    },
 });
 
 const Education = mongoose.model('Education', educationSchema);

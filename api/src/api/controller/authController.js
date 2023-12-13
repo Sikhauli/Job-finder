@@ -58,6 +58,7 @@ const loginUser = async (req, res) => {
     }
 };
 
+
 {/*
 
 const loginUser = async (req, res) => {
@@ -77,6 +78,65 @@ const loginUser = async (req, res) => {
 };
 
 */}
+
+// Controller function to get all users
+const getUsers = async (req, res) => {
+    try {
+        const users = await User.find();
+        res.send(users);
+    } catch (error) {
+        res.status(500).send({ error: 'Internal server error' });
+    }
+};
+
+// Controller function to get a single user by ID
+const getUser = async (req, res) => {
+    try {
+        const user = await User
+            .findById(req.params.id)
+            .populate('experiences') 
+            .populate('education'); 
+
+        if (!user) {
+            return res.status(404).send({ error: 'User not found' });
+        }
+        res.send(user);
+    } catch (error) {
+        res.status(500).send({ error: 'Internal server error' });
+    }
+};
+
+// Controller function to update a user by ID
+const updateUser = async (req, res) => {
+    try {
+        const existingUser = await User.findOne({ email: req.body.email });
+        if (existingUser && existingUser._id.toString() !== req.params.id) {
+            return res.status(400).send({ error: 'Email already exists for another user' });
+        }
+
+        const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        if (!user) {
+            return res.status(404).send({ error: 'User not found' });
+        }
+        res.send(user);
+    } catch (error) {
+        res.status(500).send({ error: 'Internal server error' });
+    }
+};
+
+// Controller function to delete a user by ID
+const deleteUser = async (req, res) => {
+    try {
+        const user = await User.findByIdAndDelete(req.params.id);
+        if (!user) {
+            return res.status(404).send({ error: 'User not found' });
+        }
+        res.send(user);
+    } catch (error) {
+        res.status(500).send({ error: 'Internal server error' });
+    }
+};
+
 
 // Controller function to log out a user (single device)
 const logoutUser = async (req, res) => {
@@ -105,4 +165,8 @@ module.exports = {
     loginUser,
     logoutUser,
     logoutAllDevices,
+    getUsers,
+    getUser,
+    updateUser,
+    deleteUser,
 };

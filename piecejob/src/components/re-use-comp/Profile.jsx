@@ -1,20 +1,36 @@
 import React, {useState, useEffect} from 'react'
 import defaultUser from '../../assets/user.png';
 import edu from '../../assets/education.png';
-import deg from '../../assets/deg3.jpg';
+import deg from '../../assets/education.rep.png';
 import TransitionsExperienceModal from "../modal/addExperience" 
-// import TransitionsEducationModal from "../modal/addEducation" 
+import TransitionsGeneralModal from "../modal/genaralModal" 
 import TransitionsEducationModal from '../modal/addEducation'
+import TransitionsAboutModal from '../modal/addAbout'
+import TransitionsJobModal from '../modal/addJob'
+import { confirmAlert } from "react-confirm-alert";
+import "react-confirm-alert/src/react-confirm-alert.css";
+import { LuUpload } from "react-icons/lu";
+import {
+    API,
+    EXPERIENCE_ENDPOINTS,
+    EDUCATION_ENDPOINTS,
+    getAxiosError,
+    API_BASE_URL,
+} from "../../helpers/constants"
+import axios from 'axios';
+
 import { SlGraduation } from "react-icons/sl";
 import { BsPersonWorkspace } from "react-icons/bs";
+import { TiEdit } from "react-icons/ti";
 
-
+import { useSnackbar } from "notistack";
 import { useSelector } from 'react-redux';
 import { selectedUser } from "../redux/selectors"
 import { useNavigate } from 'react-router-dom';
 import { MdMailOutline } from "react-icons/md"; 
 import { GoDownload } from "react-icons/go";
 import { MdOutlineAddBox } from "react-icons/md";
+import { TiDeleteOutline } from "react-icons/ti";
 
 // MUI imports
 import Card from '@mui/material/Card';
@@ -38,7 +54,6 @@ import ListItemText from '@mui/material/ListItemText';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Avatar from '@mui/material/Avatar';
 import ImageIcon from '@mui/icons-material/Image';
-
 import CardHeader from '@mui/material/CardHeader';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
@@ -73,13 +88,23 @@ const ExpandMore = styled((props) => {
 function Profile() {
 
     const navigate = useNavigate();
-    const currentUser = useSelector(selectedUser);
-    const [expandedExperience, setExpandedExperience] = useState(true);
+    // const currentUser = useSelector(selectedUser);
+    const currentUser = useSelector((state) => state.auth.currentUser);
+    const [expandedExperience, setExpandedExperience] = useState(false);
+    const [expandedGeneral, setExpandedGeneral] = useState(true);
     const [expandedCertification, setExpandedCertification] = useState(false);
     const [tags, setTags] = useState([]);
     const [newTag, setNewTag] = useState('');
     const [showModal, setShowModal] = useState(false);
     const [displayModal, setDisplayModal] = useState(false);
+    const [jobModal, setJobModal] = useState(false);
+    const [generalModal, setGeneralModal] = useState(false);
+    const [aboutModal, setAboutModal] = useState(false);
+    const { enqueueSnackbar } = useSnackbar();
+    const [experienceData, setExperienceData] = useState([])
+    const [expNum, setExpNum] = useState(0)
+    const [educationData, setEducationData] = useState([])
+    const [eduNum, setEdunum] = useState(0)
 
     const handleAddTag = () => {
         if (newTag.trim() !== '' && !tags.includes(newTag)) {
@@ -94,12 +119,115 @@ function Profile() {
 
     const handleExpandClickCertification = () => {
         setExpandedCertification(!expandedCertification);
+        setExpandedExperience(false);
+        setExpandedGeneral(false)
     };
 
     const handleExpandClickExperience = () => {
         setExpandedExperience(!expandedExperience);
+        setExpandedCertification(false);
+        setExpandedGeneral(false)
     };
-    
+ 
+    useEffect(() => {
+        if (!expandedExperience && !expandedCertification) {
+            setExpandedGeneral(true);
+        } else {
+            setExpandedGeneral(false);
+        }
+    }, [expandedExperience, expandedCertification]);
+
+    useEffect(() => {
+        // dispatch(showLoading());
+        if (currentUser) {
+            const experienceApi = axios.get(`${API_BASE_URL}${EXPERIENCE_ENDPOINTS.get}${currentUser._id}`);
+            const educationApi = axios.get(`${API_BASE_URL}${EDUCATION_ENDPOINTS.get}${currentUser._id}`);
+
+            // Make both API calls simultaneously
+            Promise.all([experienceApi, educationApi])
+                .then((responses) => {
+
+                    const experienceData = responses[0]?.data;
+                    const educationData = responses[1]?.data;
+
+                    setExperienceData(experienceData);
+                    setEducationData(educationData)
+                    setExpNum(experienceData.length)
+                    setEdunum(educationData.length)
+                })
+                .catch((errors) => {
+                        enqueueSnackbar(getAxiosError(errors), { variant: "error" });
+                })
+                .finally(() => {
+                    // dispatch(hideLoading());
+                });
+        }
+    }, [currentUser, enqueueSnackbar, expNum, eduNum]);
+
+    const deleteExperience = (id) => {
+        confirmAlert({
+            title: "Delete Experience",
+            message: "Are you sure you want to do this?",
+            buttons: [
+                {
+                    label: "Confirm",
+                    onClick: () => {
+                        // dispatch(showLoading());
+                        axios.delete(`${API_BASE_URL}${EXPERIENCE_ENDPOINTS.delete}${id}`)
+                            .then(() => {
+                                enqueueSnackbar("Experience Successfully deleted!", {
+                                    variant: "success",
+                                });
+                            })
+                            .catch((error) => {
+                                enqueueSnackbar(getAxiosError(error), { variant: "error" });
+                            })
+                            // .finally(() => {
+                            //     dispatch(hideLoading());
+                            // });
+                    },
+                },
+                {
+                    label: "Cancel",
+                    onClick: () => { },
+                },
+            ],
+        });
+    };
+
+
+    const deleteEducation = (id) => {
+        confirmAlert({
+            title: "Delete Education",
+            message: "Are you sure you want to do this?",
+            buttons: [
+                {
+                    label: "Confirm",
+                    onClick: () => {
+                        // dispatch(showLoading());
+                        axios.delete(`${API_BASE_URL}${EDUCATION_ENDPOINTS.delete}${id}`)
+                            .then(() => {
+                                enqueueSnackbar("Education Successfully deleted!", {
+                                    variant: "success",
+                                });
+                            })
+                            .catch((error) => {
+                                enqueueSnackbar(getAxiosError(error), { variant: "error" });
+                            })
+                        // .finally(() => {
+                        //     dispatch(hideLoading());
+                        // });
+                    },
+                },
+                {
+                    label: "Cancel",
+                    onClick: () => { },
+                },
+            ],
+        });
+    };
+
+
     const FormRow = () => (
         <>
             {items.map((item) => (
@@ -115,57 +243,79 @@ function Profile() {
         </>
     );
 
+    function formatDate(dateString) {
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        return new Date(dateString).toLocaleDateString(undefined, options);
+    }
+
     const items = [
+        {
+            name: "FIRSTNAME",
+            content: currentUser?.username 
+        },
+        {
+            name: "LASTNAME",
+            content: currentUser?.lastname 
+        },
+        {
+            name: "Position",
+            content: currentUser?.position 
+        },
         { 
             name: 'AGE',
-            content: '29' 
+            content: `${currentUser?.age || ""} Years`
         },
         {
             name: 'YEARS OF EXPERIENCE',
-            content: '5'
+            content: `${currentUser?.experience || ""} Years`
         },
         {
             name: 'PHONE',
-            content: '+27 713459503'
+            content:  currentUser?.phone 
         },
         {
             name: 'LOCATION',
-            content: 'centurion, rua vista'
+            content: currentUser?.location  
         },
         {
             name: 'EMAIL',
-            content: 'sikhauli@gmail.com'
+            content: currentUser?.email 
         },
         {
             name: 'CTC',
-            content: '17 000'
+            content: "R " + (currentUser?.CTC || "")
         },
-
+    
     ];
 
   return (
 
-      <div className='min-h-screen h-fit w-full grid grid-cols-3 p-5 bg-gradient-to-r from-gray-100 to-sky-00'>
+      <div className='h-screen overflow-hidden w-full grid grid-cols-3 p-5 bg-gradient-to-r from-gray-100 to-sky-00'>
           <Card className='col-span-1 p-2 mr-8 h-screen'>
-              <div className='mb-1' >
+              <div className='' >
                    <div className='w-full h-auto flex flex-col items-center justify-center rounded' style={{ backgroundColor: 'transparent', border: 'none' }}>
                       <div className='h-auto'>
                          <img src={defaultUser} className='rounded-full w-20 h-20 ' />
                       </div>
                       <div className='h-auto mt-2 mb-5 text-center text-gray-500'>
-                          <p className='text-sm'> {currentUser?.username}</p>
-                          <p className='text-xs'>Software Developer</p>
+                          <p className='text-sm'>{currentUser?.username} {currentUser?.lastname}</p>
+                          <p className='text-xs'>{currentUser?.position}</p>
                       </div>
                    </div>
               </div>
-              <div className='mb-1 ' style={{ backgroundColor: 'transparent' }}>
+              <div className='mb-1' >
+                  <div className='rounded-xl w-fit ml-auto' onClick={() => setAboutModal(true)}>
+                      <TiEdit />
+                  </div>
                   <CardContent>
-                      <Typography variant="body2" color="text.secondary" className="text-center">
-                          Lizards are a widespread group of squamate reptiles, with over 6,000
-                          species, ranging across all continents except Antarctica
+                      <Typography color="text.secondary" className="text-center text-sm">
+                        <p className="text-xs">
+                          {currentUser?.about ?? "Tell us a bit about yourself here "}
+                        </p>
                       </Typography>
                   </CardContent>
               </div>
+
               <Card className='mt-1 p-2 overflow-auto overflow-y-scroll' style={{ backgroundColor: 'transparent', border: 'none' }}>
                   <Typography gutterBottom variant="h6" component="div" >
                       <p className='text-gray-400'>SKILLS</p>
@@ -208,43 +358,54 @@ function Profile() {
             </Card>
           </Card>
 
-          <div className='col-span-2' style={{ backgroundColor: 'transparent' }}>
-            <div className="border border-gray-300 bg-white mb-4 p-4">
-                  <Typography gutterBottom variant="h5" component="div">
-                      Basic Information
-                  </Typography>
-                  <Divider component="div" role="presentation"/> 
+          <div className='col-span-2 overflow-auto bg-transparent h-screen' >
+             <Card sx={{ width: '100%', marginBottom: '10px', padding: '10px' }}>
+                <CardActions disableSpacing>
+                    <Typography gutterBottom variant="h5" component="div">
+                        Basic Information
+                    </Typography>
+                    <ExpandMore
+                        onClick={() => setGeneralModal(true)}
+                        aria-label="show more"
+                    >
+                          <TiEdit />
+                    </ExpandMore>
+                </CardActions>
+                  <Divider component="div" role="presentation" /> 
+                  <Collapse in={expandedGeneral} timeout="auto" unmountOnExit>
+                    <CardContent>
+                          <Box sx={{ flexGrow: 1 }} >
+                              <Grid container spacing={1}>
+                                  <Grid container item spacing={1}>
+                                      <FormRow />
+                                  </Grid>
+                              </Grid>
+                              <div className='mt-6 space-x-6'>
+                                  <Button
+                                      startIcon={<LuUpload size={18} color="white" />}
+                                      variant="contained"
+                                      color="primary"
+                                      onClick={() => setAboutModal(true)}
+                                      className='mt-2  hover:bg-white hover:text-blue-500'
+                                  >
+                                      <p className='mt-1'> Upload CV</p>
+                                  </Button>
 
-              <Box sx={{ flexGrow: 1 }} >
-                  <Grid container spacing={1}>
-                      <Grid container item spacing={1}>
-                          <FormRow />
-                      </Grid>
-                  </Grid>
-                  <div className='mt-6 space-x-6'>
-                  <Button
-                      startIcon={<GoDownload size={18} color="white" />}
-                      variant="contained"
-                      color="primary"
-                      onClick={handleAddTag}
-                      className='mt-2  hover:bg-white hover:text-blue-500'
-                  >
-                      Download CV
-                  </Button>
-                
-                  <Button
-                      startIcon={<MdMailOutline size={18} />}
-                      color="primary"
-                      variant="outlined"
-                      onClick={handleAddTag}
-                       className='hover:text-gray-500'
-                  >
-                      SEND EMAIL
-                  </Button>
-                 </div>
-              </Box>
-            </div>
-    
+                                  <Button
+                                      startIcon={<MdMailOutline size={18} />}
+                                      color="primary"
+                                      variant="outlined"
+                                      onClick={() => setJobModal(true)}
+                                      className='hover:text-gray-500'
+                                  >
+                                      <p className='mt-1'> POST Job</p>
+                                  </Button>
+                              </div>
+                          </Box>
+                    </CardContent>
+                </Collapse>
+            </Card>
+
             {/* Experience Card */}
             <Card sx={{ width: '100%', marginBottom: '10px', padding: '10px' }}>
                 <CardActions disableSpacing>
@@ -263,41 +424,44 @@ function Profile() {
                   <Divider component="div" role="presentation" /> 
                 <Collapse in={expandedExperience} timeout="auto" unmountOnExit>
                     <CardContent>
-                        < List
-                            sx={{ width: '100%', bgcolor: 'background.paper' }} >
-                            <ListItem>
-                                <ListItemAvatar >
-                                    <Avatar style={{ width: '80px', height: '80px', marginRight: '10px' }}>
-                                        <ImageIcon />
-                                    </Avatar>
-                                </ListItemAvatar>
-                                <ListItemText
-                                    primary="AKiltech co"
-                                    secondary={
-                                    <>
-                                        <Typography
-                                            component="span"
-                                            variant="h9"
-                                            color="textPrimary"
-                                            style={{ fontSize: '0.70rem' }}
-                                        >
-                                            Junior software engineer
-                                        </Typography>
-                                        <br />
-                                        <Typography
-                                            component="span"
-                                            variant="h9"
-                                            color="textSecondary"
-                                            style={{ fontSize: '0.70rem' }}
-                                        >
-                                            February 2023 - June 2023 | Remote
-                                        </Typography>
-                                    </>
-                                    }
-                                />
-                            </ListItem>
-                            <Divider variant="inset" component="li" />
-                            <div className='mt-8'>
+                          <div className="relative w-full h-full grid grid-cols-2 gap-4">                             
+                              {experienceData.map((experience) => (
+                                  <List key={experience._id} sx={{ width: '100%', bgcolor: 'background.paper', marginRight: '10px' }}>
+                                      <ListItem>
+                                          <ListItemText
+                                              primary={experience.company}
+                                              secondary={
+                                                  <>
+                                                      <Typography
+                                                          component="span"
+                                                          variant="h9"
+                                                          color="textPrimary"
+                                                          style={{ fontSize: '0.70rem' }}
+                                                      >
+                                                          {experience.position}
+                                                      </Typography>
+                                                      <br />
+                                                      <Typography
+                                                          component="span"
+                                                          variant="h9"
+                                                          color="textSecondary"
+                                                          style={{ fontSize: '0.70rem' }}
+                                                      >
+                                                          {formatDate(experience.startDate)} - {experience.endDate ? formatDate(experience.endDate) : 'Present'}<br/>
+                                                          {experience.location}
+                                                      </Typography>
+                                                  </>
+                                              }
+                                          />
+                                      </ListItem>
+                                      <Divider />
+                                      <div className="absolute top-0 right-0 p-2 cursor-pointer hover:bg-gray-200" onClick={() => deleteExperience(experience._id)}>
+                                          <TiDeleteOutline color='red' />
+                                      </div>
+                                  </List>
+                              ))}
+                          </div>
+                          <div className='mt-4'>
                               <Button
                                   startIcon={<BsPersonWorkspace size={18} />}
                                   color="primary"
@@ -305,10 +469,9 @@ function Profile() {
                                   onClick={() => setShowModal(true)}
                                   className='hover:text-gray-500'
                               >
-                                 Add experience
+                                  Add experience
                               </Button>
-                            </div>
-                        </List>
+                          </div>
                     </CardContent>
                 </Collapse>
             </Card>
@@ -330,37 +493,43 @@ function Profile() {
                   </CardActions>
                   <Divider component="div" role="presentation" /> 
                   <Collapse in={expandedCertification} timeout="auto" unmountOnExit>
-                      <CardContent>                          
-                          <Card sx={{ maxWidth: 395 }}>
-                              <CardHeader
-                                  avatar={<Avatar alt="Your Image" src={deg} />}
-                                  action={
-                                      <IconButton aria-label="settings">
-                                          <MoreVertIcon />
-                                      </IconButton>
-                                  }
-                                  title="University of venda"
-                                  subheader="Computer science and information science"
-                              />
-                              <CardMedia
-                                  component="img"
-                                  height="194"
-                                  image={deg}
-                                  alt="Paella dish"
-                              />
-                              <CardContent>
-                                  <Typography variant="body2" color="text.secondary">
-                                      This impressive paella is a perfect party dish and a fun meal to cook
-                                      together with your guests. Add 1 cup of frozen peas along with the mussels,
-                                      if you like.
-                                  </Typography>
-                              </CardContent>
-                              <CardActions>
-                                  <p className='text-xs mr-2 font-bold'>05 February 2015</p>
-                                  <span className='text-xs font-bold'>-</span>
-                                  <p className='text-xs ml-2 font-bold'>05 November 2019</p>
-                              </CardActions>                               
-                          </Card>
+                      <CardContent>
+                          <Grid container spacing={2}>
+                              {educationData.map((educationItem) => (
+                                  <Grid item key={educationItem._id} xs={12} md={6}>
+                                      <Card sx={{ maxWidth: 395 }}>
+                                          <CardHeader
+                                              avatar={<Avatar alt="Your Image" src={deg} />}
+                                              action={
+                                                  <IconButton aria-label="settings" onClick={() => deleteEducation(educationItem._id)} >
+                                                      <TiDeleteOutline color='red' />
+                                                  </IconButton>
+                                              }
+                                              title={educationItem.institution}
+                                              subheader={educationItem.degree}
+                                          />
+                                          <CardMedia
+                                              component="img"
+                                              style={{ height: '194px', width: '400px', objectFit: 'cover' }}
+                                              image={`http://localhost:1960/${educationItem.image}`}
+                                              alt="Paella dish"
+                                          />
+
+                                          <CardContent>
+                                              <Typography variant="body2" color="text.secondary">
+                                                  {educationItem.description}
+                                              </Typography>
+                                          </CardContent>
+                                          <CardActions className="flex items-center justify-between bg-gray-100">
+                                              <span className="text-gray-600">
+                                                  <p className='text-xs'> {formatDate(educationItem.startDate)} - {educationItem.endDate ? formatDate(educationItem.endDate) : 'Present'} </p>
+                                              </span>
+                                          </CardActions>
+
+                                      </Card>
+                                  </Grid>
+                              ))}
+                          </Grid>
                           <div className='mt-8'>
                               <Divider />
                               <div className='mt-4'></div>
@@ -394,7 +563,31 @@ function Profile() {
             currentUser={currentUser}
         />
     )}
-    
+
+    {generalModal && (
+        <TransitionsGeneralModal
+            generalModal={generalModal}
+            setGeneralModal={setGeneralModal}
+            currentUser={currentUser}
+        />
+    )}
+
+    {aboutModal && (
+        <TransitionsAboutModal
+            aboutModal={aboutModal}
+            setAboutModal={setAboutModal}
+            currentUser={currentUser}
+        />
+    )}
+        
+    {jobModal && (
+        <TransitionsJobModal
+            jobModal={jobModal}
+            setJobModal={setJobModal}
+            currentUser={currentUser}
+        />
+    )}
+          
 </div>
 
 

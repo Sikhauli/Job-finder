@@ -12,7 +12,8 @@ const Navigation = ({ isLoggedIn, username }) => {
 
     const navigate = useNavigate();
 
-    const currentUser = useSelector(selectedUser);
+    // const currentUser = useSelector(selectedUser);
+    const currentUser = useSelector((state) => state.auth.currentUser);
     const [showDropdown, setShowDropdown] = useState(false);
     const [showLoginPopup, setShowLoginPopup] = useState(false);
     const [showProfilePopup, setShowProfilePopup] = useState(false);

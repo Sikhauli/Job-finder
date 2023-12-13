@@ -20,16 +20,16 @@ const experienceSchema = new mongoose.Schema({
     },
     description: {
         type: String,
-        required: false,
+        required: true,
     },
     location: {
         type: String,
-        required: false,
+        required: true,
     },
     editor: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        required: false,
+        required: true,
     },
 });
 

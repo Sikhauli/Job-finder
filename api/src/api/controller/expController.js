@@ -11,6 +11,19 @@ const addExp = async (req, res) => {
     }
 };
 
+// Controller function to get a single experience by ID
+const getExpById = async (req, res) => {
+    try {
+        const experiences = await Experience.find({ editor: req.params.id });
+        if (!experiences || experiences.length === 0) {
+            return res.status(404).json({ message: 'Experiences not found for the provided User' });
+        }
+        res.status(200).json(experiences);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to retrieve experiences', message: error.message });
+    }
+};
+
 // Get All Experience
 const getExp = async (req, res) => {
     try {
@@ -41,11 +54,11 @@ const updateExp = async (req, res) => {
 // Delete Experience
 const deleteExp = async (req, res) => {
     try {
-        const deletedExperience = await Experience.deleteMany({ _id: { $in: req.body.id } });
-        if (deletedExperience.deletedCount === 0) {
-            return res.status(404).json({ message: 'No experience found with the provided IDs' });
+        const deletedExperience = await Experience.findByIdAndDelete(req.params.id);
+        if (!deletedExperience) {
+            return res.status(404).json({ message: 'Experience not found with the provided ID' });
         }
-        res.status(200).json({ message: 'Experience deleted', deletedExperienceCount: deletedExperience.deletedCount });
+        res.status(200).json({ message: 'Experience deleted' });
     } catch (error) {
         res.status(500).json({ error: 'Failed to delete experience', message: error.message });
     }
@@ -54,6 +67,7 @@ const deleteExp = async (req, res) => {
 module.exports = {
     addExp,
     getExp,
+    getExpById,
     updateExp,
     deleteExp,
 };

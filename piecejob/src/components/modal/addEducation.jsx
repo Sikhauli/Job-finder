@@ -2,17 +2,22 @@ import { useEffect, useState } from "react";
 import MuiModal from "@mui/material/Modal";
 import { useSnackbar } from "notistack";
 import Button from '@mui/material/Button';
-import InputLocation from '../component/LocationInput'
 import TextField from '@mui/material/TextField';
+import {
+    API,
+    EDUCATION_ENDPOINTS,
+    getAxiosError,
+    API_BASE_URL,
+} from "../../helpers/constants"
+import axios from 'axios';
 
 const TransitionsEducationModal = ({
     displayModal,
     setDisplayModal,
     currentUser,
-
 }) => {
     const [values, setValues] = useState();
-    const [images, setImages] = useState([]);
+    const [image, setImage] = useState([]);
     const { enqueueSnackbar } = useSnackbar();
 
     const onChange = (e) => {
@@ -25,37 +30,47 @@ const TransitionsEducationModal = ({
         });
     };
 
+    const getFiles = (e) => {
+        e?.preventDefault();
+        const file = e.target?.files[0];
+        setValues((prev) => {
+            return {
+                ...prev,
+                image: file,
+            };
+        });
+    };
+
+    console.log("images :", image)
+
     const submit = (e) => {
         e.preventDefault();
         if (values) {
             const sendData = {
                 ...values,
-                images,
-                editor: currentUser,
+                editor: currentUser._id,
             };
+            console.log("sendData:", sendData);
+            console.log("API URL:", `${API_BASE_URL}${EDUCATION_ENDPOINTS.add}`);
 
-            //     API.post(`${VEHICLE_ENDPOINTS.add}`, sendData, {
-            //         headers: {
-            //             "Content-Type": "multipart/form-data",
-            //         },
-            //     })
-            //         .then(() => {
-            //             enqueueSnackbar(`Vehicle added successfully.`, {
-            //                 variant: "success",
-            //             });
-            //             setValues(null);
-            //             setShowModal(false);
-            //         })
-            //         .catch((error) => {
-            //             enqueueSnackbar(getAxiosError(error), { variant: "error" });
-            //         })
-            //         .finally(() => {
-            //             dispatch(hideLoading());
-            //         });
+            axios.post(`${API_BASE_URL}${EDUCATION_ENDPOINTS.add}`, sendData, {
+                headers: {
+                  "Content-Type": "multipart/form-data",
+                },
+                withCredentials: true,
+            })
+                .then(() => {
+                    enqueueSnackbar(`Education added successfully.`, {
+                        variant: "success",
+                    });
+                    setValues(null);
+                    setDisplayModal(false);
+                })
+                .catch((error) => {
+                    enqueueSnackbar(getAxiosError(error), { variant: "error" });
+                })
         }
     };
-console.log("Values :", values)
-console.log("currentUser :", currentUser)
 
     const FIELDS = [
         {
@@ -85,11 +100,10 @@ console.log("currentUser :", currentUser)
 
     ];
 
-
     return (
         <MuiModal open={displayModal} onClose={() => setDisplayModal(false)}>
             <div className={`m-auto mt-12 w-1/2 rounded-2xl p-8 bg-gray-100`} >
-                <form onSubmit={submit} className={``}>
+                <form className={``}>
                     <p className="text-2xl text-bold mb-8">Add Education</p>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-2">
                         {FIELDS.map((data, i) => (
@@ -101,7 +115,9 @@ console.log("currentUser :", currentUser)
                                     required={data?.required || false}
                                     className={`h-12 w-full rounded-md border border-skin-base px-4 placeholder-color-gray outline-none duration-300 ease-in hover:border-skin-inverted focus:border-skin-inverted`}
                                     onChange={data?.onChange}
+                                    aria-labelledby={`label-${data?.name}`}
                                 />
+                                <p id={`label-${data?.name}`} className="sr-only">{data?.placeholder}</p>
                             </div>
                         ))}
 
@@ -116,6 +132,18 @@ console.log("currentUser :", currentUser)
                         fullWidth
                         variant="outlined"
                     />
+
+                    <div className="my-2 ">
+                        <p className="text-primary text-sm">Upload Document</p>
+                        <input
+                            radius="sm"
+                            onChange={getFiles}
+                            className="text-xs inline-block"
+                            name="image"
+                            type="file"
+                        />
+                    </div>
+
                     <div className={`mt-8 flex items-center justify-end gap-2`}>
                         <Button
                             variant="outlined"
@@ -127,6 +155,7 @@ console.log("currentUser :", currentUser)
 
                         <Button
                             variant="outlined"
+                            onClick={submit}
                             className={`h-10 w-24 rounded-xl text-sm  duration-300 ease-in-out hover:drop-shadow-2xl`}
                         >
                             Submit

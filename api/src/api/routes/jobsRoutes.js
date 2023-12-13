@@ -30,7 +30,7 @@ router.get("/search", searchGetJobs);
 
 router.get("/filter", filterJobs);
 
-router.post("/", authMiddleware, postJob);
+router.post("/", postJob);
 
 router.get("/", getJobs);
 

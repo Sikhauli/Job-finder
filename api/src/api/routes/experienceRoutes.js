@@ -1,9 +1,10 @@
 const {
 addExp,
 getExp,
+getExpById,
 updateExp,
 deleteExp
-} = require("../controller/authController");
+} = require("../controller/expController");
 
 const authMiddleware = require("../middlewares/auth")
 
@@ -11,9 +12,11 @@ const router = require("express").Router();
 
 router.post('/', addExp);
 
-router.get('/:id', getExp)
+router.get('/', getExp)
 
-router.patch('/', updateExp);
+router.get('/:id', getExpById);
+
+router.patch('/id', updateExp);
 
 router.delete('/:id', deleteExp);
 

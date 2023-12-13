@@ -2,10 +2,13 @@
 import React, { useState } from 'react';
 import { useSnackbar } from 'notistack';
 import { FaTimes } from 'react-icons/fa';
+import { useSelector } from 'react-redux';
+
 
 function JobDetailsOverlay({ selectedJob, onClose, isLoggedIn }) {
 
     const { enqueueSnackbar } = useSnackbar();
+    const currentUser = useSelector((state) => state.auth.currentUser);
 
 
 
@@ -14,7 +17,7 @@ function JobDetailsOverlay({ selectedJob, onClose, isLoggedIn }) {
     }
 
     const handleApplyClick = () => {
-        if (!isLoggedIn) {
+        if (!currentUser) {
             enqueueSnackbar('Login To Apply', { variant: 'error' });
         } else {
             // Logic for handling "Apply" action for logged-in users

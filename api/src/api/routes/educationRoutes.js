@@ -3,13 +3,19 @@ const {
     getEdu,
     updateEdu,
     deleteEdu
-} = require("../controller/authController");
+} = require("../controller/eduController");
 
+const { FILE_STORAGE_PATH } = require("../helpers/constants");
 const authMiddleware = require("../middlewares/auth")
+const uploadFiles = require("../middlewares/upload");
 
 const router = require("express").Router();
 
-router.post('/', addEdu);
+router.post(
+    "/",
+    uploadFiles(FILE_STORAGE_PATH.educationImage).single("image"),
+    addEdu
+);
 
 router.get('/:id', getEdu)
 

@@ -15,6 +15,8 @@ const Home = () => {
         setSearchResults(results);
     }; 
 
+    console.log("searchResults :", searchResults)
+
     return (
       <>
         <Navigation />
@@ -24,7 +26,7 @@ const Home = () => {
                 <LeftContainer />
             </div>
             <div className='w-8/12 mr-2 ml-2'>
-                <ViewJobs />
+                <ViewJobs searchResults={searchResults} />
             </div>
             <div className=' w-1/3 h-screen' >
                 <LatestJobs />
