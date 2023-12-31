@@ -1,9 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { FaBuilding, FaMapMarkerAlt, FaCheckCircle, FaClock, FaMoneyBillAlt, FaSave } from 'react-icons/fa';
+import { FaBuilding, FaMapMarkerAlt, FaCheckCircle, FaClock, FaMoneyBillAlt } from 'react-icons/fa';
+import { GrSave } from "react-icons/gr";
 import JobDetailsOverlay from './JobDetailsOverlay';
 import { useSnackbar } from 'notistack';
 import LoginFormPopup from './LoginForm';
 import { useSelector } from 'react-redux';
+import {
+    API,
+    getAxiosError,
+    API_BASE_URL,
+} from "../../helpers/constants"
+import axios from 'axios';
+import { hideLoading, showLoading } from "../redux/loadingslice";
+import { useDispatch } from "react-redux";
 
 function ViewJobs({ searchResults }) {
 
@@ -12,8 +21,10 @@ function ViewJobs({ searchResults }) {
     const [selectedJob, setSelectedJob] = useState(null);
     const [isLoginFormOpen, setIsLoginFormOpen] = useState(false);
     const [filteredJobs, setFilteredJobs] = useState([]);
+    const dispatch = useDispatch();
 
     useEffect(() => {
+        dispatch(showLoading());
         fetch('http://localhost:1960/api/jobs/')
             .then(response => response.json())
             .then(data => {
@@ -21,13 +32,15 @@ function ViewJobs({ searchResults }) {
             })
             .catch(error => {
                 enqueueSnackbar('Error fetching data', error,  { variant: 'error' });
+            }).finally(() => {
+                dispatch(hideLoading());
             });
     }, []);
 
     const handleJobClick = async (job) => {
         setSelectedJob(job);
-        console.log("currentUser :", currentUser)
         try {
+            dispatch(showLoading());
             await fetch('http://localhost:1960/api/jobs/selection', {
                 method: 'POST',
                 headers: {
@@ -37,6 +50,27 @@ function ViewJobs({ searchResults }) {
             });
         } catch (error) {
             enqueueSnackbar('Error updating selection count', { variant: 'error' });
+        } finally{
+            dispatch(hideLoading());
+        }
+    };
+
+    const handleSaveClick = async (jobId) => {
+        console.log("jobId :", jobId)
+        if(!currentUser){
+            enqueueSnackbar('Login First to save Jobs', { variant: 'error' });
+        }
+        try {
+            dispatch(showLoading());
+            const response = await axios.post('http://localhost:1960/api/save/', {
+                jobId,
+                userId: currentUser._id
+            });
+            enqueueSnackbar(response.data.message, { variant: 'success' });
+        } catch (error) {
+            enqueueSnackbar(error.response.data.message, { variant: 'error' });
+        }finally{
+            dispatch(hideLoading());
         }
     };
 
@@ -44,8 +78,9 @@ function ViewJobs({ searchResults }) {
         setSelectedJob(null);
     };
 
-    const openLoginForm = () => {
+    const openLoginPopup = () => {
         setIsLoginFormOpen(true);
+        setSelectedJob(null)
     };
 
     const closeLoginForm = () => {
@@ -59,12 +94,9 @@ function ViewJobs({ searchResults }) {
     }, [searchResults]);
 
     const renderJobs = () => {
-        if (filteredJobs.length === 0) {
-            return <p className='text-2xl text-gray-950'> No search results found </p>;
-        }
         return filteredJobs.map((job) => (            
                     <div key={job._id}
-                        className={`p-4 mb-4 border rounded border-gray-300 bg-white ${selectedJob === job ? 'bg-blue-100' : ''}`}
+                        className={`p-4 w-auto mb-4 border rounded border-gray-300 bg-white ${selectedJob === job ? 'bg-blue-100' : ''}`}
                         onClick={() => handleJobClick(job)}
                     >
                         <div className='flex items-center'>
@@ -108,8 +140,13 @@ function ViewJobs({ searchResults }) {
                                 <h5 className='text-sm'>{job.description}</h5>
                             </div>
 
-                            <button className='flex items-center ml-auto bg-blue-500 p-1 text-white rounded'>
-                                <FaSave className='mr-1' />
+                            <button className='flex items-center ml-auto bg-blue-500 p-2 text-white rounded'
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleSaveClick(job._id);
+                                }}
+                            >
+                                <GrSave className='mr-1' />
                                 Save
                             </button>
                         </div>
@@ -143,7 +180,13 @@ function ViewJobs({ searchResults }) {
                 <div>
 
                     {renderJobs()}
-                    <JobDetailsOverlay selectedJob={selectedJob} onClose={handleCloseOverlay} />
+                    <JobDetailsOverlay 
+                        selectedJob={selectedJob}
+                        onClose={handleCloseOverlay}
+                        isLoggedIn={!!currentUser}
+                        openLoginPopup={openLoginPopup}
+                        handleCloseOverlay={handleCloseOverlay}
+                    />
                     {isLoginFormOpen && (<LoginFormPopup onClose={closeLoginForm} />)}
                 </div>
             </div>

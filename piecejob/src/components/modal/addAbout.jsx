@@ -11,7 +11,8 @@ import {
     API_BASE_URL,
 } from "../../helpers/constants"
 import axios from 'axios';
-
+import { hideLoading, showLoading } from "../redux/loadingslice";
+import { useDispatch, useSelector } from "react-redux";
 
 const TransitionsAboutModal = ({
     aboutModal,
@@ -21,6 +22,7 @@ const TransitionsAboutModal = ({
 }) => {
     const [values, setValues] = useState();
     const { enqueueSnackbar } = useSnackbar();
+    const dispatch = useDispatch();
 
     const onChange = (e) => {
         e.preventDefault();
@@ -36,6 +38,7 @@ const TransitionsAboutModal = ({
 
     const submit = (e) => {
         e.preventDefault();
+        dispatch(showLoading());
         if (values) {
             const sendData = {
                 ...values,
@@ -56,9 +59,9 @@ const TransitionsAboutModal = ({
                 .catch((error) => {
                     enqueueSnackbar(getAxiosError(error), { variant: "error" });
                 })
-            // .finally(() => {
-            //     dispatch(hideLoading());
-            // });
+            .finally(() => {
+                dispatch(hideLoading());
+            });
         }
     };
 

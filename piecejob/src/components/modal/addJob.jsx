@@ -7,6 +7,8 @@ import TextField from '@mui/material/TextField';
 import InputLocation from '../component/LocationInput'
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
+import { hideLoading, showLoading } from "../redux/loadingslice";
+import { useDispatch, useSelector } from "react-redux";
 
 import {
     API,
@@ -26,6 +28,7 @@ const TransitionsJobModal = ({
 }) => {
     const [values, setValues] = useState();
     const [selectedLocation, setSelectedLocation] = useState(null);
+    const dispatch = useDispatch();
 
     const { enqueueSnackbar } = useSnackbar();
 
@@ -41,6 +44,7 @@ const TransitionsJobModal = ({
 
     const submit = (e) => {
         e.preventDefault();
+        dispatch(showLoading());
         if (values && currentUser) {
             const sendData = {
                 ...values,
@@ -62,12 +66,11 @@ const TransitionsJobModal = ({
                 .catch((error) => {
                     enqueueSnackbar(getAxiosError(error), { variant: "error" });
                 })
-            // .finally(() => {
-            //     dispatch(hideLoading());
-            // });
+            .finally(() => {
+                dispatch(hideLoading());
+            });
         }
     };
-
 
     const handleLocationChange = (location) => {
         setSelectedLocation(location.description);

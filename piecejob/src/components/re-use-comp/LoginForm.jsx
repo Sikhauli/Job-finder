@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { FaTimes } from 'react-icons/fa';
 import axios from 'axios';
-import { useDispatch } from 'react-redux';
 import { useSnackbar } from 'notistack';
 import { loginUser, registerUser } from '../redux/api';
+import { hideLoading, showLoading } from "../redux/loadingslice";
+import { useDispatch, useSelector } from "react-redux";
 
 const LoginFormPopup = ({ onClose, isLoginFormOpen }) => {
 
     const { enqueueSnackbar } = useSnackbar();
     const dispatch = useDispatch();
     const [activeForm, setActiveForm] = useState("form1");
+    const [loading, setLoading] = useState(false);
+
     const [formData, setFormData] = useState({
         form1: {
             email: "",
@@ -35,22 +38,29 @@ const LoginFormPopup = ({ onClose, isLoginFormOpen }) => {
     const handleLoginSubmit = async (e) => {
         e.preventDefault();
         try {
+            dispatch(showLoading());
             const { token, user } = await loginUser(formData.form1, dispatch);
-            enqueueSnackbar('Login successful', { variant: 'success' });
             onClose();
         } catch (error) {
             enqueueSnackbar('Login failed', { variant: 'error' });
+        }
+        finally{
+            dispatch(hideLoading());
         }
     };
 
     const handleRegisterSubmit = async (e) => {
         e.preventDefault();
         try {
+            dispatch(showLoading());
             const { token, user } = await registerUser(formData.form2, dispatch);
             enqueueSnackbar('Registration successful', { variant: 'success' });
             onClose();
         } catch (error) {
             enqueueSnackbar('Registration failed', { variant: 'error' });
+        }
+        finally{
+            dispatch(hideLoading());
         }
     };
 
@@ -81,6 +91,7 @@ const LoginFormPopup = ({ onClose, isLoginFormOpen }) => {
 
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-opacity-50 bg-gray-800">
+            {loading && <div>Loading...</div>}
             {activeForm === "form1" && (
                 <div className="fixed inset-0 flex items-center justify-center bg-opacity-50 bg-gray-800">
                     <div className="bg-white p-6 rounded-lg w-2/4 shadow-md relative">

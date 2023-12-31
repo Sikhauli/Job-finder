@@ -6,7 +6,6 @@ const JobFilter = ({ onFilter }) => {
     const [filteredSkills, setFilteredSkills] = useState([]);
 
     useEffect(() => {
-        // Fetch suggested skills from the backend API based on the input value
         if (skills) {
             fetch(`http://localhost:1960/api/skills/suggest?query=${skills}`)
                 .then(response => response.json())
@@ -20,8 +19,6 @@ const JobFilter = ({ onFilter }) => {
     const handleSkillsChange = (event) => {
         const value = event.target.value;
         setSkills(value);
-
-        // Update filtered skills based on input value
         const suggested = suggestedSkills.filter(skill => skill.toLowerCase().includes(value.toLowerCase()));
         setFilteredSkills(suggested);
     };

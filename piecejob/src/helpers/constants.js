@@ -40,7 +40,17 @@ export const JOB_ENDPOINTS = {
     update: "jobs/",
     delete: "jobs/",
     add: "jobs/",
+    apply: "jobs/apply"
 };
+
+export const SAVED_ENDPOINTS = {
+    get: "save",
+    update: "save/",
+    delete: "save/",
+    add: "save/",
+    search: "save/search",
+};
+
 
 
 export const getAxiosError = (error) => {
@@ -53,6 +63,7 @@ export const getAxiosError = (error) => {
         // The request was made but no response was received
         // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
         // http.ClientRequest in node.js
+
         return error.request.data;
     } else {
         console.error(error);

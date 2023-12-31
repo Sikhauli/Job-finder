@@ -9,7 +9,14 @@ const {
    filterJobs,
    suggestSkills,
    selection,
-   getSelection
+   getSelection,
+   applyJob,
+   saveJob,
+   getSavedJobs,
+   getSavedJobById,
+   deleteSavedJob,
+   searchSavedJobs
+
 } = require("../controller/jobsController");
 
 const  authMiddleware  = require("../middlewares/auth")
@@ -39,6 +46,10 @@ router.get("/:id", authMiddleware, getJob);
 router.delete("/:id", authMiddleware, deleteJob);
 
 router.patch("/:id", authMiddleware, updateJob);
+
+router.post("/apply", applyJob);
+
+
 
 
 module.exports = router;

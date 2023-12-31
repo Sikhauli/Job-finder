@@ -15,8 +15,6 @@ const Home = () => {
         setSearchResults(results);
     }; 
 
-    console.log("searchResults :", searchResults)
-
     return (
       <>
         <Navigation />

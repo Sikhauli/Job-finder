@@ -58,27 +58,6 @@ const loginUser = async (req, res) => {
     }
 };
 
-
-{/*
-
-const loginUser = async (req, res) => {
-    try {
-        const { email, password } = req.body;
-        const user = await findByCredentials(email, password);
-        if (!user) {
-            return res.status(401).send({ error: 'Login failed' });
-        }
-        await user.populate('experiences').populate('education').execPopulate();
-        const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
-        res.cookie('token', token, { httpOnly: true });
-        res.send({ user, token });
-    } catch (error) {
-        res.status(500).send({ error: 'Internal server error' });
-    }
-};
-
-*/}
-
 // Controller function to get all users
 const getUsers = async (req, res) => {
     try {

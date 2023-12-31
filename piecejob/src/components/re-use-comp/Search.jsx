@@ -6,19 +6,21 @@ import {
     API_BASE_URL,
 } from "../../helpers/constants"
 import axios from 'axios';
-
+import { hideLoading, showLoading } from "../redux/loadingslice";
+import { useDispatch } from "react-redux";
 
 const SearchBar = ({ updateSearchResults }) => {
 
     const { enqueueSnackbar } = useSnackbar();
+    const dispatch = useDispatch();
 
     const [searchText, setSearchText] = useState('');
     const [searchResults, setSearchResults] = useState([]);
 
-
     // for searching
     useEffect(() => {
         if (searchText && searchText?.length > 2) {
+            dispatch(showLoading());
             axios.get(`${API_BASE_URL}${JOB_ENDPOINTS.get}/search?keyword=${searchText}`)
                 .then((response) => {
                     setSearchResults(response.data);
@@ -26,10 +28,12 @@ const SearchBar = ({ updateSearchResults }) => {
                 })
                 .catch((error) => {
                     enqueueSnackbar(getAxiosError(error), { variant: "error" });
+                }).finally(() => {
+                    dispatch(hideLoading());
                 });
         } else {
             setSearchResults([]); 
-        }
+        } 
     }, [searchText]);
 
     return (

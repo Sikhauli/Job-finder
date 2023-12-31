@@ -5,25 +5,44 @@ import { FaTimes } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
 
 
-function JobDetailsOverlay({ selectedJob, onClose, isLoggedIn }) {
+function JobDetailsOverlay({ selectedJob, onClose, isLoggedIn, openLoginPopup, handleCloseOverlay }) {
 
     const { enqueueSnackbar } = useSnackbar();
     const currentUser = useSelector((state) => state.auth.currentUser);
-
-
 
     if (!selectedJob) {
         return null;
     }
 
-    const handleApplyClick = () => {
-        if (!currentUser) {
-            enqueueSnackbar('Login To Apply', { variant: 'error' });
-        } else {
-            // Logic for handling "Apply" action for logged-in users
+    const handleApplyClick = async () => {
+        try {
+            if (!currentUser) {
+                openLoginPopup();
+                return;
+            }
+            const response = await fetch('http://localhost:1960/api/jobs/apply', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    jobId: selectedJob._id,
+                    userId: currentUser._id, 
+                }),
+            });
+
+            if (response.ok) {
+                enqueueSnackbar('Job applied successfully', { variant: 'success' });
+                handleCloseOverlay()
+            } else {
+                const data = await response.json();
+                enqueueSnackbar(data.message || 'Failed to apply for the job', { variant: 'error' });
+            }
+        } catch (error) {
+            console.error('Error applying for job:', error);
+            enqueueSnackbar(error, { variant: 'error' });
         }
     };
-
 
     return (
         <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-50 animate-fade-in">

@@ -40,16 +40,18 @@ function LeftContainerProfile() {
            <div className='w-full bg-white-500 h-auto ml-2 border mb-2 p-5 flex flex-col items-center justify-center rounded border-gray-300 bg-white' style={{ overflow: 'auto', overflowY: 'scroll' }}>
                 <div className='h-auto'>
                    {currentUser ?(
-                     <img src={defaultUser} className='rounded-full w-20 h-20 ' />
+                    <img src={defaultUser} className='rounded-full w-20 h-20 ' />
                    ):(
-                     <img src={defaultPic } className = 'rounded-full w-20 h-20 '/>
+                    <img src={defaultUser } className = 'rounded-full w-20 h-20 '/>
                    )}
                 </div>
+                {currentUser && (
                 <div className='h-auto mt-2 mb-5'>
-                    <p>Software Developer</p>
+                  <p>{currentUser?.position}</p>
                 </div>
-                    <button className='bg-blue-500 h-10 w-40 rounded-md text-white' onClick={handleApplyClick}>Edit Profile</button>       
-        </div>
+                )}
+               <button className='bg-blue-500 h-10 w-40 rounded-md text-white' onClick={handleApplyClick}>Edit Profile</button>       
+           </div>
 
                 <div className='w-full bg-white-500 h-auto ml-2 border p-5 rounded border-gray-300 bg-white'>
 
@@ -69,7 +71,7 @@ function LeftContainerProfile() {
                   <div className='flex items-center mb-2'>
                       <p className='bg-blue-500 mr-auto text-sm py-1 px-2  rounded text-white'>
                          <ul>
-                            <li>Software Engineering</li>
+                                  <li>{currentUser?.position}</li>
                          </ul> 
                       </p>
                       <div className='flex items-center ml-auto'>
@@ -84,7 +86,7 @@ function LeftContainerProfile() {
               <div className='w-full bg-white-500 h-auto ml-2 border p-5 mt-3 rounded border-gray-300 bg-white'>
                   <div className='flex items-center mb-2'>
                       <p className='bg-transparent mr-auto text-sm py-1 px-2 rounded'>
-                          Work Experience
+                        Work Experience
                       </p>
                       <div className='flex items-center ml-auto'>
                           <FaBriefcase className='mr-1' />
@@ -96,7 +98,7 @@ function LeftContainerProfile() {
                   </div>
                   <div className='flex items-center'>                 
                       <p className='mr-auto text-sm py-1 px-2 text-gray-800 rounded text-sm'>                       
-                         Software Engineering                        
+                        {currentUser?.position}                        
                       </p>
                       <div className='flex items-center ml-auto'>
                           <p className='text-gray-600 text-sm py-1 px-2 rounded'>
@@ -105,7 +107,7 @@ function LeftContainerProfile() {
                       </div>
                   </div>
                   <p className='mr-auto text-xs py-1 px-2 text-gray-500 rounded text-'>
-                      Software Engineering Software Engineering Software Engineering Software Engineering Software Engineering
+                    {currentUser?.about}
                   </p>
               </div>
              </div>

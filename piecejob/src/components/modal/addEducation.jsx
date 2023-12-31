@@ -10,6 +10,9 @@ import {
     API_BASE_URL,
 } from "../../helpers/constants"
 import axios from 'axios';
+import { hideLoading, showLoading } from "../redux/loadingslice";
+import { useDispatch, useSelector } from "react-redux";
+
 
 const TransitionsEducationModal = ({
     displayModal,
@@ -19,6 +22,7 @@ const TransitionsEducationModal = ({
     const [values, setValues] = useState();
     const [image, setImage] = useState([]);
     const { enqueueSnackbar } = useSnackbar();
+    const dispatch = useDispatch();
 
     const onChange = (e) => {
         e.preventDefault();
@@ -45,6 +49,7 @@ const TransitionsEducationModal = ({
 
     const submit = (e) => {
         e.preventDefault();
+        dispatch(showLoading());
         if (values) {
             const sendData = {
                 ...values,
@@ -69,6 +74,9 @@ const TransitionsEducationModal = ({
                 .catch((error) => {
                     enqueueSnackbar(getAxiosError(error), { variant: "error" });
                 })
+                .finally(() => {
+                    dispatch(hideLoading());
+                });
         }
     };
 

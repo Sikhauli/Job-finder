@@ -11,6 +11,8 @@ import{
     API_BASE_URL,
 } from "../../helpers/constants"
 import axios from 'axios';
+import { hideLoading, showLoading } from "../redux/loadingslice";
+import { useDispatch, useSelector } from "react-redux";
 
 const TransitionsGeneralModal = ({
     generalModal,
@@ -22,6 +24,7 @@ const TransitionsGeneralModal = ({
     const [image, setImage] = useState(null);
     const [selectedLocation, setSelectedLocation] = useState(null);
     const { enqueueSnackbar } = useSnackbar();
+    const dispatch = useDispatch();
 
     const onChange = (e) => {
         e.preventDefault();
@@ -39,6 +42,7 @@ const TransitionsGeneralModal = ({
 
     const submit = (e) => {
         e.preventDefault();
+        dispatch(showLoading());
         if (values || selectedLocation) {
             const sendData = {
                 ...values,
@@ -46,7 +50,7 @@ const TransitionsGeneralModal = ({
                 ...(selectedLocation !== null && { location: selectedLocation }),
                 editor: currentUser._id,
             };
-            axios.patch(`${API_BASE_URL}${USER_ENDPOINTS.update}${currentUser._id}`, sendData, {
+                 axios.patch(`${API_BASE_URL}${USER_ENDPOINTS.update}${currentUser._id}`, sendData, {
                     headers: {
                         "Content-Type": 'application/json',
                     },
@@ -61,9 +65,9 @@ const TransitionsGeneralModal = ({
                     .catch((error) => {
                         enqueueSnackbar(getAxiosError(error), { variant: "error" });
                     })
-                    // .finally(() => {
-                    //     dispatch(hideLoading());
-                    // });
+                    .finally(() => {
+                        dispatch(hideLoading());
+                    });
         }
     };
 

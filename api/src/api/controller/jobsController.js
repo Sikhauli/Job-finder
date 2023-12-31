@@ -1,5 +1,6 @@
 const Job = require('../model/job')
 const SelectedJob = require('../model/SelectedJob')
+const AppliedJob = require('../model/appliedJob');
 
 const postJob = async (req, res) => {
     try {
@@ -156,6 +157,35 @@ const getSelection = async (req, res) => {
     }
 };
 
+
+const applyJob = async (req, res) => {
+    try {
+        const { jobId, userId } = req.body;
+
+        const existingApplication = await AppliedJob.findOne({ jobId, userId });
+        if (existingApplication) {
+            return res.status(400).json({ message: "You have already applied to this job" });
+        }
+
+        const selectedJob = await SelectedJob.findOne({ jobId });
+        if (!selectedJob) {
+            return res.status(404).json({ message: "Job not found" });
+        }
+
+        selectedJob.selectionCount += 1;
+        await selectedJob.save();
+
+        const newApplication = new AppliedJob({ jobId, userId });
+        await newApplication.save();
+
+        res.json({ message: 'Job applied successfully' });
+    } catch (error) {
+        console.error('Error applying to job:', error);
+        res.status(500).json({ message: 'An error occurred' });
+    }
+};
+
+
 const suggestSkills = async (req, res) => {
     const query = req.query.query;
     const suggestedSkills = [
@@ -185,6 +215,10 @@ const suggestSkills = async (req, res) => {
 };
 
 
+// saved Jobs Functions
+
+
+
 
 module.exports = {
     postJob, 
@@ -197,5 +231,7 @@ module.exports = {
     filterJobs,
     suggestSkills,
     selection,
-    getSelection
+    getSelection,
+    applyJob,
+    
 };

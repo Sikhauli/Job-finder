@@ -18,18 +18,17 @@ import {
     API_BASE_URL,
 } from "../../helpers/constants"
 import axios from 'axios';
+import { hideLoading, showLoading } from "../redux/loadingslice";
+import { useDispatch, useSelector } from "react-redux";
+import { IoBriefcaseOutline } from "react-icons/io5";
 
 import { SlGraduation } from "react-icons/sl";
 import { BsPersonWorkspace } from "react-icons/bs";
 import { TiEdit } from "react-icons/ti";
 
 import { useSnackbar } from "notistack";
-import { useSelector } from 'react-redux';
-import { selectedUser } from "../redux/selectors"
 import { useNavigate } from 'react-router-dom';
 import { MdMailOutline } from "react-icons/md"; 
-import { GoDownload } from "react-icons/go";
-import { MdOutlineAddBox } from "react-icons/md";
 import { TiDeleteOutline } from "react-icons/ti";
 
 // MUI imports
@@ -51,28 +50,8 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Avatar from '@mui/material/Avatar';
-import ImageIcon from '@mui/icons-material/Image';
 import CardHeader from '@mui/material/CardHeader';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-
-//Modal imports
-import Backdrop from '@mui/material/Backdrop';
-import Modal from '@mui/material/Modal';
-import Fade from '@mui/material/Fade';
-
-const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 400,
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
-    boxShadow: 24,
-    p: 4,
-};
 
 const ExpandMore = styled((props) => {
     const { expand, ...other } = props;
@@ -88,7 +67,7 @@ const ExpandMore = styled((props) => {
 function Profile() {
 
     const navigate = useNavigate();
-    // const currentUser = useSelector(selectedUser);
+    const dispatch = useDispatch();
     const currentUser = useSelector((state) => state.auth.currentUser);
     const [expandedExperience, setExpandedExperience] = useState(false);
     const [expandedGeneral, setExpandedGeneral] = useState(true);
@@ -138,7 +117,7 @@ function Profile() {
     }, [expandedExperience, expandedCertification]);
 
     useEffect(() => {
-        // dispatch(showLoading());
+        dispatch(showLoading());
         if (currentUser) {
             const experienceApi = axios.get(`${API_BASE_URL}${EXPERIENCE_ENDPOINTS.get}${currentUser._id}`);
             const educationApi = axios.get(`${API_BASE_URL}${EDUCATION_ENDPOINTS.get}${currentUser._id}`);
@@ -159,7 +138,7 @@ function Profile() {
                         enqueueSnackbar(getAxiosError(errors), { variant: "error" });
                 })
                 .finally(() => {
-                    // dispatch(hideLoading());
+                    dispatch(hideLoading());
                 });
         }
     }, [currentUser, enqueueSnackbar, expNum, eduNum]);
@@ -172,7 +151,7 @@ function Profile() {
                 {
                     label: "Confirm",
                     onClick: () => {
-                        // dispatch(showLoading());
+                        dispatch(showLoading());
                         axios.delete(`${API_BASE_URL}${EXPERIENCE_ENDPOINTS.delete}${id}`)
                             .then(() => {
                                 enqueueSnackbar("Experience Successfully deleted!", {
@@ -182,9 +161,9 @@ function Profile() {
                             .catch((error) => {
                                 enqueueSnackbar(getAxiosError(error), { variant: "error" });
                             })
-                            // .finally(() => {
-                            //     dispatch(hideLoading());
-                            // });
+                            .finally(() => {
+                                dispatch(hideLoading());
+                            });
                     },
                 },
                 {
@@ -204,7 +183,7 @@ function Profile() {
                 {
                     label: "Confirm",
                     onClick: () => {
-                        // dispatch(showLoading());
+                        dispatch(showLoading());
                         axios.delete(`${API_BASE_URL}${EDUCATION_ENDPOINTS.delete}${id}`)
                             .then(() => {
                                 enqueueSnackbar("Education Successfully deleted!", {
@@ -214,9 +193,9 @@ function Profile() {
                             .catch((error) => {
                                 enqueueSnackbar(getAxiosError(error), { variant: "error" });
                             })
-                        // .finally(() => {
-                        //     dispatch(hideLoading());
-                        // });
+                        .finally(() => {
+                            dispatch(hideLoading());
+                        });
                     },
                 },
                 {
@@ -392,7 +371,7 @@ function Profile() {
                                   </Button>
 
                                   <Button
-                                      startIcon={<MdMailOutline size={18} />}
+                                      startIcon={<IoBriefcaseOutline size={18} />}
                                       color="primary"
                                       variant="outlined"
                                       onClick={() => setJobModal(true)}

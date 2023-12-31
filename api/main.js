@@ -11,10 +11,7 @@ const jobsRoutes = require('./src/api/routes/jobsRoutes');
 const authRoutes = require('./src/api/routes/authRoutes'); 
 const experienceRoutes = require('./src/api/routes/experienceRoutes')
 const educationRoutes = require('./src/api/routes/educationRoutes')
-
-// const accomplishmentRoutes = require('./src/api/routes/accomplishmentRoutes')
-// const certificationRoutes = require('./src/api/routes/certificationRoutes')
-
+const saveRoutes = require('./src/api/routes/saveRoutes')
 dotenv.config();
 
 const port = process.env.PORT || 1960;
@@ -30,17 +27,10 @@ const corsOptions = {
 };
 
 //cors middleware
-// app.use(cors());
 app.use(cors(corsOptions));
-
-
-console.log('Directory:', __dirname);
-console.log('Uploads Directory:', path.join(__dirname, 'uploads'));
-
 
 // Serve static files from the 'uploads' directory
 app.use('/uploads', express.static(path.join(__dirname, 'src/uploads')));
-
 
 mongoose
     .connect(process.env.DB_CONNECT)
@@ -54,7 +44,6 @@ mongoose
     });
 
 app.use((req, res, next) => {
-    console.log('Incoming Request:', req.method, req.url);
     next();
 });
 
@@ -63,9 +52,7 @@ app.use("/api/user", authRoutes);
 app.use("/api/jobs", jobsRoutes);
 app.use("/api/experience", experienceRoutes); 
 app.use("/api/education", educationRoutes);
-
-// app.use("/api/accomplishment", accomplishmentRoutes);
-// app.use("/api/certification", certificationRoutes);
+app.use("/api/save", saveRoutes);
 
 
 

@@ -1,27 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { useSnackbar } from 'notistack';
+import { useDispatch, useSelector } from "react-redux";
+import { hideLoading, showLoading } from "../redux/loadingslice";
 
 function LatestJobs() {
 
     const [searchResults, setSearchResults] = useState([]);
     const [selectedJob, setSelectedJob] = useState(null);
     const [jobIdsOnly, setJobIdsOnly] = useState([]);
-
+    const dispatch = useDispatch();
 
     const { enqueueSnackbar } = useSnackbar();
-
 
     useEffect(() => {
         fetch('http://localhost:1960/api/jobs/selection')
             .then(response => response.json())
-            .then(data => {                
+            .then(data => {
                 const limitedData = data.slice(0, 5);
-                const jobIdsOnly = limitedData.map(item => item.jobId); 
+                const jobIdsOnly = limitedData.map(item => item.jobId);
                 setJobIdsOnly(jobIdsOnly)
                 setSearchResults(jobIdsOnly);
             })
             .catch(error => {
-                enqueueSnackbar(error, { variant: 'error' }); 
+                enqueueSnackbar(error, { variant: 'error' });
+            })
+            .finally(() => {
+                // dispatch(hideLoading());
             });
     }, [enqueueSnackbar, jobIdsOnly]);
 
