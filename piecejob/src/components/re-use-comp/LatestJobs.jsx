@@ -2,6 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useSnackbar } from 'notistack';
 import { useDispatch, useSelector } from "react-redux";
 import { hideLoading, showLoading } from "../redux/loadingslice";
+import {
+    API,
+    getAxiosError,
+    API_BASE_URL,
+    JOB_ENDPOINTS
+} from "../../helpers/constants"
 
 function LatestJobs() {
 
@@ -13,7 +19,7 @@ function LatestJobs() {
     const { enqueueSnackbar } = useSnackbar();
 
     useEffect(() => {
-        fetch('http://localhost:1960/api/jobs/selection')
+        fetch(`${API_BASE_URL}${JOB_ENDPOINTS.selection}`)
             .then(response => response.json())
             .then(data => {
                 const limitedData = data.slice(0, 5);

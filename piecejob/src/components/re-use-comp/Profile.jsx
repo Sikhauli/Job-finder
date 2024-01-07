@@ -489,7 +489,7 @@ function Profile() {
                                           <CardMedia
                                               component="img"
                                               style={{ height: '194px', width: '400px', objectFit: 'cover' }}
-                                              image={`http://localhost:1960/${educationItem.image}`}
+                                              image={`https://job-finder-api-xxhx.onrender.com/${educationItem.image}`}
                                               alt="Paella dish"
                                           />
 

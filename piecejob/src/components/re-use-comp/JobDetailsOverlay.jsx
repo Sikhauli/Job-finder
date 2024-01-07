@@ -1,9 +1,13 @@
-
 import React, { useState } from 'react';
 import { useSnackbar } from 'notistack';
 import { FaTimes } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
-
+import {
+    API,
+    JOB_ENDPOINTS,
+    getAxiosError,
+    API_BASE_URL,
+} from "../../helpers/constants"
 
 function JobDetailsOverlay({ selectedJob, onClose, isLoggedIn, openLoginPopup, handleCloseOverlay }) {
 
@@ -20,7 +24,7 @@ function JobDetailsOverlay({ selectedJob, onClose, isLoggedIn, openLoginPopup, h
                 openLoginPopup();
                 return;
             }
-            const response = await fetch('http://localhost:1960/api/jobs/apply', {
+            const response = await fetch(`${API_BASE_URL}${JOB_ENDPOINTS.apply}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -46,7 +50,7 @@ function JobDetailsOverlay({ selectedJob, onClose, isLoggedIn, openLoginPopup, h
 
     return (
         <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-50 animate-fade-in">
-            <div className="bg-white p-6 rounded-md w-2/4 shadow-md w-96 h-96 overflow-y-hidden relative">
+            <div className="bg-white p-6 rounded-md w-fit shadow-md h-96 overflow-y-hidden relative">
                 <button className="absolute top-4 right-4 text-gray-600 hover:text-gray-800" onClick={onClose}>
                     <FaTimes className="text-xl" />
                 </button>

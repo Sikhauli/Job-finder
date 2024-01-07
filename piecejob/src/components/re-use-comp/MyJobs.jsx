@@ -53,7 +53,6 @@ const MyJobs = () => {
 
 
   useEffect(() => {
-    if (currentUser) {
       dispatch(showLoading());
       const config = {
         headers: {
@@ -71,7 +70,6 @@ const MyJobs = () => {
           enqueueSnackbar(getAxiosError(error), { variant: 'error' });
         })
         .finally(() => dispatch(hideLoading()));
-    }
   }, []);
 
 

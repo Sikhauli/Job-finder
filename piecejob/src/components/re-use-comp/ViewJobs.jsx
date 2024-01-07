@@ -9,6 +9,8 @@ import {
     API,
     getAxiosError,
     API_BASE_URL,
+    JOB_ENDPOINTS,
+    SAVED_ENDPOINTS
 } from "../../helpers/constants"
 import axios from 'axios';
 import { hideLoading, showLoading } from "../redux/loadingslice";
@@ -25,7 +27,7 @@ function ViewJobs({ searchResults }) {
 
     useEffect(() => {
         dispatch(showLoading());
-        fetch('http://localhost:1960/api/jobs/')
+        fetch(`${ API_BASE_URL }${ JOB_ENDPOINTS.get }`)
             .then(response => response.json())
             .then(data => {
                 setFilteredJobs(data);
@@ -41,7 +43,7 @@ function ViewJobs({ searchResults }) {
         setSelectedJob(job);
         try {
             dispatch(showLoading());
-            await fetch('http://localhost:1960/api/jobs/selection', {
+            await fetch(`${API_BASE_URL}${JOB_ENDPOINTS.get}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -62,7 +64,7 @@ function ViewJobs({ searchResults }) {
         }
         try {
             dispatch(showLoading());
-            const response = await axios.post('http://localhost:1960/api/save/', {
+            const response = await axios.post(`${API_BASE_URL}${SAVED_ENDPOINTS.add}`, {
                 jobId,
                 userId: currentUser._id
             });
