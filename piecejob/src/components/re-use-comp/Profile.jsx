@@ -121,8 +121,7 @@ function Profile() {
         if (currentUser) {
             const experienceApi = axios.get(`${API_BASE_URL}${EXPERIENCE_ENDPOINTS.get}${currentUser._id}`);
             const educationApi = axios.get(`${API_BASE_URL}${EDUCATION_ENDPOINTS.get}${currentUser._id}`);
-
-            // Make both API calls simultaneously
+           
             Promise.all([experienceApi, educationApi])
                 .then((responses) => {
 

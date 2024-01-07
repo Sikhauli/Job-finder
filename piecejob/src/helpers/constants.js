@@ -7,6 +7,20 @@ export const API = axios.create({
     withCredentials: true,
 });
 
+API.interceptors.request.use(
+    (config) => {
+        const authToken = localStorage.getItem('authToken');
+        if (authToken) {
+            config.headers.Authorization = `Bearer ${authToken}`;
+        }
+        config.credentials = 'include'; 
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
+
 export const AUTH_ENDPOINTS = {
     login: "user/login",
     logout: "user/logout",
@@ -36,7 +50,7 @@ export const EDUCATION_ENDPOINTS = {
 };
 
 export const JOB_ENDPOINTS = {
-    get: "jobs/",
+    get: "jobs",
     update: "jobs/",
     delete: "jobs/",
     add: "jobs/",
@@ -46,12 +60,10 @@ export const JOB_ENDPOINTS = {
 export const SAVED_ENDPOINTS = {
     get: "save",
     update: "save/",
-    delete: "save/",
+    delete: "save",
     add: "save/",
     search: "save/search",
 };
-
-
 
 export const getAxiosError = (error) => {
     if (error.response) {

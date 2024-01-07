@@ -53,15 +53,15 @@ function LatestJobs() {
                     {
 
                         searchResults.map((job) => (
-                            <div key={job._id}
+                            <div key={job?._id}
                                 className={`p-4 mb-4 border text-xs rounded border-gray-300 bg-white ${selectedJob === job ? 'bg-blue-100' : ''}`}
                                 onClick={() => handleJobClick(job)}
                             >
                                 <div className='flex items-center'>
-                                    <h1 className='text-xs font-semibold'>{job.title}</h1>
+                                    <h1 className='text-xs font-semibold'>{job?.title}</h1>
                                     <div className='flex items-center ml-auto'>
                                         <p className='text-gray-600 text-xs py-1 px-2 rounded'>
-                                            R{job.salary}
+                                            R{job?.salary}
                                         </p>
                                     </div>
 
@@ -71,7 +71,7 @@ function LatestJobs() {
                                   
                                 </div>
                                 <div className='flex items-center'>
-                                    <h5 className='text-xs'>{job.description}</h5>
+                                    <h5 className='text-xs'>{job?.description}</h5>
                                 </div>
 
                                 <div className='flex justify-center mt-4'>
@@ -80,8 +80,8 @@ function LatestJobs() {
 
                                     { selectedJob === job && (
                                     <div className='bg-gray-100 p-4 mt-4 rounded text-xs'>
-                                            <p>Location: {job.location}</p> {/*  change all this and put job skills  */}
-                                            <p>Company: {job.company}</p>
+                                            <p>Location: {job?.location}</p> {/*  change all this and put job skills  */}
+                                            <p>Company: {job?.company}</p>
                                         </div>
                                     )}
 

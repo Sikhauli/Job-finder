@@ -11,11 +11,8 @@ const {
    selection,
    getSelection,
    applyJob,
-   saveJob,
-   getSavedJobs,
-   getSavedJobById,
-   deleteSavedJob,
-   searchSavedJobs
+   getJobsByEditor,
+   deleteJobByEditorAndId
 
 } = require("../controller/jobsController");
 
@@ -49,7 +46,8 @@ router.patch("/:id", authMiddleware, updateJob);
 
 router.post("/apply", applyJob);
 
+router.get('editor/:userId', getJobsByEditor);
 
-
+router.delete('editor/:userId/:jobId', deleteJobByEditorAndId);
 
 module.exports = router;

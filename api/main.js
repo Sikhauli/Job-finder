@@ -12,6 +12,7 @@ const authRoutes = require('./src/api/routes/authRoutes');
 const experienceRoutes = require('./src/api/routes/experienceRoutes')
 const educationRoutes = require('./src/api/routes/educationRoutes')
 const saveRoutes = require('./src/api/routes/saveRoutes')
+
 dotenv.config();
 
 const port = process.env.PORT || 1960;

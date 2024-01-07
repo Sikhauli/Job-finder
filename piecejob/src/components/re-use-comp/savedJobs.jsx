@@ -50,7 +50,6 @@ const SavedJobs = () => {
     fetchSavedJobs();
   }, []);
 
-
   // for searching
   useEffect(() => {
     if (keyword?.length && keyword?.length > 2) {
@@ -73,9 +72,9 @@ const SavedJobs = () => {
     setKeyword(e.target.value);
   };
 
-  const deleteVehicle = (id) => {
+  const deleteVehicle = (jobId) => {
     confirmAlert({
-      title: "Delete Vehicle",
+      title: "Delete Job",
       message: "Are you sure you want to do this?",
       buttons: [
         {
@@ -83,7 +82,7 @@ const SavedJobs = () => {
           onClick: () => {
             dispatch(showLoading());
             setLoading(true);
-            API.delete(`${SAVED_ENDPOINTS.delete}${id}`)
+            axios.delete(`${API_BASE_URL}${SAVED_ENDPOINTS.delete}/${currentUser._id}/${jobId}`)
               .then(() => {
                 enqueueSnackbar("Successfully deleted!", {
                   variant: "success",
@@ -178,7 +177,7 @@ const SavedJobs = () => {
           alt="Logo"
           className="h-10 w-10"
         />
-        <div className="text-blue-500 text-2xl font-semibold">Job Search</div>
+        <div className="text-blue-500 text-2xl font-semibold">Saved Jobs</div>
       </div>
       {/* ============= searchbox and add button */}
       <div className={`mt-8  ml-7 border-b w-1/3 flex items-center justify-between`}>

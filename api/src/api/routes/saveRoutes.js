@@ -18,9 +18,7 @@ router.get('/', getSavedJobs);
 
 router.get('/:id', getSavedJobById);
 
-router.delete("/:id", deleteSavedJob);
-
-
+router.delete('/:userId/:jobId', deleteSavedJob);
 
 
 module.exports = router;

@@ -8,11 +8,9 @@ const loadingSlice = createSlice({
     },
     reducers: {
         showLoading: (state) => {
-            console.log('Show loading action dispatched');
             state.value = true;
         },
         hideLoading: (state) => {
-            console.log('Hide loading action dispatched');
             state.value = false;
         },
     },
