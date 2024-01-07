@@ -23,7 +23,7 @@ app.use(cookieParser());
 app.disable('x-powered-by');
 
 const corsOptions = {
-    origin: 'https://job-finder-bhg5.onrender.com/',
+    origin: 'https://job-finder-bhg5.onrender.com',
     credentials: true,
 };
 

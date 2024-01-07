@@ -7,7 +7,7 @@ import { hideLoading, showLoading } from "./loadingslice";
 export const loginUser = async (formData, dispatch) => {
     try {
         dispatch(showLoading);
-        const response = await axios.post(`${API_BASE_URL}user/login`, formData);
+        const response = await API.post(`${API_BASE_URL}user/login`, formData);
         const { token, user } = response.data;
 
         dispatch(setAuthToken(token));
@@ -26,7 +26,7 @@ export const loginUser = async (formData, dispatch) => {
 export const registerUser = async (formData, dispatch) => {
     try {
         dispatch(showLoading);
-        const response = await axios.post(`${API_BASE_URL}user/register`, formData);
+        const response = await API.post(`${API_BASE_URL}user/register`, formData);
         const { token, user } = response.data;
 
         dispatch(setAuthToken(token));

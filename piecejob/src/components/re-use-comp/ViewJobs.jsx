@@ -25,16 +25,18 @@ function ViewJobs({ searchResults }) {
     const [filteredJobs, setFilteredJobs] = useState([]);
     const dispatch = useDispatch();
 
+    
     useEffect(() => {
         dispatch(showLoading());
-        fetch(`${ API_BASE_URL }${ JOB_ENDPOINTS.get }`)
-            .then(response => response.json())
+        API.get(`${JOB_ENDPOINTS.get}`)
+            .then(response => response.data)
             .then(data => {
                 setFilteredJobs(data);
             })
             .catch(error => {
-                enqueueSnackbar('Error fetching data', error,  { variant: 'error' });
-            }).finally(() => {
+                enqueueSnackbar('Error fetching data', error, { variant: 'error' });
+            })
+            .finally(() => {
                 dispatch(hideLoading());
             });
     }, []);
@@ -43,16 +45,10 @@ function ViewJobs({ searchResults }) {
         setSelectedJob(job);
         try {
             dispatch(showLoading());
-            await fetch(`${API_BASE_URL}${JOB_ENDPOINTS.get}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ jobId: job._id })
-            });
+            await API.post(`${JOB_ENDPOINTS.get}`, { jobId: job._id });
         } catch (error) {
             enqueueSnackbar('Error updating selection count', { variant: 'error' });
-        } finally{
+        } finally {
             dispatch(hideLoading());
         }
     };

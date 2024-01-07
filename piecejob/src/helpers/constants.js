@@ -1,6 +1,7 @@
 import axios from "axios";
 
-export const API_BASE_URL = 'https://job-finder-api-xxhx.onrender.com/api/';
+export const API_BASE_URL = 'https://jobs-finder-api-eg08.onrender.com/api/';
+// export const API_BASE_URL = 'http://localhost:1960/api/';
 
 export const API = axios.create({
     baseURL: API_BASE_URL,
@@ -84,3 +85,4 @@ export const getAxiosError = (error) => {
         // return error.message;
     }
 };
+

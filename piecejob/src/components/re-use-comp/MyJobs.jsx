@@ -138,7 +138,7 @@ const MyJobs = () => {
           onClick: () => {
             dispatch(showLoading());
             setLoading(true);
-            axios.delete(`${API_BASE_URL}${JOB_ENDPOINTS.delete}/${currentUser._id}/${jobId}`)
+            API.delete(`${API_BASE_URL}${JOB_ENDPOINTS.delete}/${currentUser._id}/${jobId}`)
               .then(() => {
                 enqueueSnackbar("Successfully deleted!", {
                   variant: "success",
