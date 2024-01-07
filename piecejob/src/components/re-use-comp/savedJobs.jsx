@@ -32,7 +32,7 @@ const SavedJobs = () => {
     const fetchSavedJobs = async () => {
       try {
         dispatch(showLoading());
-        const response = await axios.get(`${API_BASE_URL}${SAVED_ENDPOINTS.get}`, {
+        const response = await API.get(`${SAVED_ENDPOINTS.get}`, {
           params: {
             userId: currentUser?._id,
           },
@@ -82,7 +82,7 @@ const SavedJobs = () => {
           onClick: () => {
             dispatch(showLoading());
             setLoading(true);
-            axios.delete(`${API_BASE_URL}${SAVED_ENDPOINTS.delete}/${currentUser._id}/${jobId}`)
+            API.delete(`${SAVED_ENDPOINTS.delete}/${currentUser._id}/${jobId}`)
               .then(() => {
                 enqueueSnackbar("Successfully deleted!", {
                   variant: "success",

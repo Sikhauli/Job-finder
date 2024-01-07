@@ -13,13 +13,7 @@ import { useSelector } from "react-redux";
 
 
 function App() {
-  const [searchResults, setSearchResults] = useState([]);
-  const [filterSkills, setFilterSkills] = useState([]);
   const loading = useSelector((state) => state.loading.value);
-
-  const handleFilter = (skill) => {
-    setFilterSkills((prevSkills) => [...prevSkills, skill]);
-  };
 
   const LoadingScreen = () => {
     return (
@@ -30,16 +24,6 @@ function App() {
       </div>
     );
   };
-
-  useEffect(() => {
-    fetch(`http://localhost:1960/api/jobs/suggest?skills=${filterSkills.join(',')}`)
-      .then((response) => response.json())
-      .then((response) => console.log('response: ', response))
-      .then((response) => setSearchResults(response))
-      .catch((error) => console.error(error));
-  }, [filterSkills]);
-
-  console.log('searchResults', searchResults);
 
   return (
     <Router>

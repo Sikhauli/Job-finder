@@ -119,8 +119,8 @@ function Profile() {
     useEffect(() => {
         dispatch(showLoading());
         if (currentUser) {
-            const experienceApi = axios.get(`${API_BASE_URL}${EXPERIENCE_ENDPOINTS.get}${currentUser._id}`);
-            const educationApi = axios.get(`${API_BASE_URL}${EDUCATION_ENDPOINTS.get}${currentUser._id}`);
+            const experienceApi = API.get(`${EXPERIENCE_ENDPOINTS.get}${currentUser._id}`);
+            const educationApi = API.get(`${EDUCATION_ENDPOINTS.get}${currentUser._id}`);
            
             Promise.all([experienceApi, educationApi])
                 .then((responses) => {
@@ -151,7 +151,7 @@ function Profile() {
                     label: "Confirm",
                     onClick: () => {
                         dispatch(showLoading());
-                        axios.delete(`${API_BASE_URL}${EXPERIENCE_ENDPOINTS.delete}${id}`)
+                        API.delete(`${EXPERIENCE_ENDPOINTS.delete}${id}`)
                             .then(() => {
                                 enqueueSnackbar("Experience Successfully deleted!", {
                                     variant: "success",
@@ -183,7 +183,7 @@ function Profile() {
                     label: "Confirm",
                     onClick: () => {
                         dispatch(showLoading());
-                        axios.delete(`${API_BASE_URL}${EDUCATION_ENDPOINTS.delete}${id}`)
+                        API.delete(`${EDUCATION_ENDPOINTS.delete}${id}`)
                             .then(() => {
                                 enqueueSnackbar("Education Successfully deleted!", {
                                     variant: "success",
@@ -236,7 +236,7 @@ function Profile() {
             content: currentUser?.lastname 
         },
         {
-            name: "Position",
+            name: "POSITION",
             content: currentUser?.position 
         },
         { 
@@ -489,7 +489,7 @@ function Profile() {
                                           <CardMedia
                                               component="img"
                                               style={{ height: '194px', width: '400px', objectFit: 'cover' }}
-                                              image={`https://job-finder-api-xxhx.onrender.com/${educationItem.image}`}
+                                              image={`https://jobs-finder-api-eg08.onrender.com/${educationItem.image}`} 
                                               alt="Paella dish"
                                           />
 
