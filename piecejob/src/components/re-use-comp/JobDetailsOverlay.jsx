@@ -49,8 +49,8 @@ function JobDetailsOverlay({ selectedJob, onClose, isLoggedIn, openLoginPopup, h
     };
 
     return (
-        <div className="fixed top-0 left-0 w-3/4 h-full bg-black bg-opacity-50 flex justify-center items-center z-50 animate-fade-in">
-            <div className="bg-white p-6 rounded-md w-fit shadow-md h-96 overflow-y-hidden relative">
+        <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-50 animate-fade-in">
+            <div className="bg-white p-6 rounded-md w-2/4 shadow-md h-96 overflow-y-hidden relative">
                 <button className="absolute top-4 right-4 text-gray-600 hover:text-gray-800" onClick={onClose}>
                     <FaTimes className="text-xl" />
                 </button>
