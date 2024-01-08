@@ -1,6 +1,7 @@
 import axios from "axios";
 
 export const API_BASE_URL = 'https://jobs-finder-api-eg08.onrender.com/api/';
+// export const API_BASE_URL = 'http://localhost:1960/api/';
 
 export const API = axios.create({
     baseURL: API_BASE_URL,
@@ -41,12 +42,11 @@ export const EXPERIENCE_ENDPOINTS = {
     add: "experience/",
 };
 
-
 export const EDUCATION_ENDPOINTS = {
     get: "education/",
     update: "education/",
     delete: "education/",
-    add: "education/",
+    add: "education",
 };
 
 export const JOB_ENDPOINTS = {

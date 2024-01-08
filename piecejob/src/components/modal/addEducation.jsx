@@ -13,7 +13,6 @@ import axios from 'axios';
 import { hideLoading, showLoading } from "../redux/loadingslice";
 import { useDispatch, useSelector } from "react-redux";
 
-
 const TransitionsEducationModal = ({
     displayModal,
     setDisplayModal,
@@ -45,8 +44,6 @@ const TransitionsEducationModal = ({
         });
     };
 
-    console.log("images :", image)
-
     const submit = (e) => {
         e.preventDefault();
         dispatch(showLoading());
@@ -55,10 +52,7 @@ const TransitionsEducationModal = ({
                 ...values,
                 editor: currentUser._id,
             };
-            console.log("sendData:", sendData);
-            console.log("API URL:", `${API_BASE_URL}${EDUCATION_ENDPOINTS.add}`);
-
-            axios.post(`${API_BASE_URL}${EDUCATION_ENDPOINTS.add}`, sendData, {
+            API.post(`${EDUCATION_ENDPOINTS.add}`, sendData, {
                 headers: {
                   "Content-Type": "multipart/form-data",
                 },

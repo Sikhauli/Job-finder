@@ -51,7 +51,7 @@ const TransitionsJobModal = ({
                 ...(selectedLocation !== null && { location: selectedLocation }),
                 editor: currentUser._id,
             };
-            axios.post(`${API_BASE_URL}${JOB_ENDPOINTS.add}`, sendData, {
+            API.post(`${JOB_ENDPOINTS.add}`, sendData, {
                 headers: {
                     "Content-Type": 'application/json',
                 },
@@ -106,7 +106,7 @@ const TransitionsJobModal = ({
     ];
 
 console.log("values :", values)
-    console.log("setSelectedLocation :", selectedLocation)
+console.log("setSelectedLocation :", selectedLocation)
 
     return (
         <MuiModal open={jobModal} onClose={() => setJobModal(false)}>

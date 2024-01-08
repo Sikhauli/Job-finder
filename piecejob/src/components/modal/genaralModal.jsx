@@ -50,7 +50,7 @@ const TransitionsGeneralModal = ({
                 ...(selectedLocation !== null && { location: selectedLocation }),
                 editor: currentUser._id,
             };
-                 axios.patch(`${API_BASE_URL}${USER_ENDPOINTS.update}${currentUser._id}`, sendData, {
+            API.patch(`${USER_ENDPOINTS.update}${currentUser._id}`, sendData, {
                     headers: {
                         "Content-Type": 'application/json',
                     },

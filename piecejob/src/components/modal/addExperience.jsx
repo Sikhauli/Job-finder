@@ -52,7 +52,7 @@ const TransitionsExperienceModal = ({
                 ...(selectedLocation !== null && { location: selectedLocation }),
                 editor: currentUser._id,
             };
-            axios.post(`${API_BASE_URL}${EXPERIENCE_ENDPOINTS.add}`, sendData, {
+            API.post(`${EXPERIENCE_ENDPOINTS.add}`, sendData, {
                 headers: {
                     "Content-Type": 'application/json',
                 },
