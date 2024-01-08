@@ -56,7 +56,8 @@ export const JOB_ENDPOINTS = {
     delete: "jobs/",
     add: "jobs/",
     apply: "jobs/apply",
-    selection: "jobs/selection"
+    selection: "jobs/selection",
+    save: "jobs/save",
 };
 
 export const SAVED_ENDPOINTS = {

@@ -28,49 +28,46 @@ const MyJobs = () => {
   const currentUser = useSelector((state) => state.auth.currentUser);
   const [filteredData, setFilteredData] = useState([]);
 
-  // useEffect(() => {
-  //   const fetchMyJobs = async () => {
-  //     try {
-  //       dispatch(showLoading());
-  //       const response = await axios.get(`${API_BASE_URL}${JOB_ENDPOINTS.get}/editor`, {
-  //         params: {
-  //           userId: currentUser?._id,
-  //         },
-  //       });
-  //       const jobs = response.data;
-  //       setData(jobs);
-  //       setFilteredData(jobs);
-  //       console.log("My jobs", jobs)
-  //     } catch (error) {
-  //       console.error("Error fetching My jobs:");
-  //     }
-  //     finally {
-  //       dispatch(hideLoading());
-  //     }
-  //   };
-  //   fetchMyJobs();
-  // }, []);
-
-
   useEffect(() => {
-      dispatch(showLoading());
-      const config = {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('authToken')}`,
-        },
-      };
-
-      console.log('Request Config:', config);
-
-      API.get(`${JOB_ENDPOINTS.get}/editor/?userId=${currentUser._id}`, config)
-        .then((response) => {
-          setData(response?.data);
-        })
-        .catch((error) => {
-          enqueueSnackbar(getAxiosError(error), { variant: 'error' });
-        })
-        .finally(() => dispatch(hideLoading()));
+    const fetchMyJobs = async () => {
+      try {
+        dispatch(showLoading());
+        const response = await API.get(`${JOB_ENDPOINTS.save}`, {
+          params: {
+            userId: currentUser?._id,
+          },
+        });
+        const jobs = response.data;
+        setData(jobs);
+        setFilteredData(jobs);
+        console.log("My jobs", jobs)
+      } catch (error) {
+        console.error("Error fetching My jobs:");
+      }
+      finally {
+        dispatch(hideLoading());
+      }
+    };
+    fetchMyJobs();
   }, []);
+
+
+  // useEffect(() => {
+  //     dispatch(showLoading());
+  //     const config = {
+  //       headers: {
+  //         Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+  //       },
+  //     };
+  //     API.get(`${JOB_ENDPOINTS.get}/editor/?userId=${currentUser._id}`, config)
+  //       .then((response) => {
+  //         setData(response?.data);
+  //       })
+  //       .catch((error) => {
+  //         enqueueSnackbar(getAxiosError(error), { variant: 'error' });
+  //       })
+  //       .finally(() => dispatch(hideLoading()));
+  // }, []);
 
 
 
