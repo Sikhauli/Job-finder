@@ -8,10 +8,13 @@ import {
     getAxiosError,
     API_BASE_URL,
 } from "../../helpers/constants"
+import { useDispatch } from "react-redux";
+import { hideLoading, showLoading } from "../redux/loadingslice";
 
 function JobDetailsOverlay({ selectedJob, onClose, isLoggedIn, openLoginPopup, handleCloseOverlay }) {
 
     const { enqueueSnackbar } = useSnackbar();
+    const dispatch = useDispatch();
     const currentUser = useSelector((state) => state.auth.currentUser);
 
     if (!selectedJob) {
@@ -19,6 +22,7 @@ function JobDetailsOverlay({ selectedJob, onClose, isLoggedIn, openLoginPopup, h
     }
 
     const handleApplyClick = async () => {
+        dispatch(showLoading());
         try {
             if (!currentUser) {
                 openLoginPopup();
@@ -45,13 +49,15 @@ function JobDetailsOverlay({ selectedJob, onClose, isLoggedIn, openLoginPopup, h
         } catch (error) {
             console.error('Error applying for job:', error);
             enqueueSnackbar(error, { variant: 'error' });
+        }finally{
+            dispatch(hideLoading());
         }
     };
 
     return (
-        <div className="fixed top-0 left-0 w-2/4 h-full bg-black bg-opacity-50 flex justify-center items-center z-50 animate-fade-in">
-            <div className="bg-white p-6 rounded-md w-full shadow-md h-96 overflow-y-hidden relative">
-                <button className="absolute top-4 right-4 text-gray-600 hover:text-gray-800" onClick={onClose}>
+        <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-50 animate-fade-in">
+            <div className="bg-white p-6 rounded-md w-2/4 shadow-md max-h-[80vh] overflow-y-auto relative">
+                    <button className="absolute top-4 right-4 text-gray-600 hover:text-gray-800" onClick={onClose}>
                     <FaTimes className="text-xl" />
                 </button>
                 <h2 className="text-2xl font-semibold mb-4 text-gray-800">{selectedJob.title}</h2>

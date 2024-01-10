@@ -24,7 +24,7 @@ function LeftContainerProfile() {
 
   return (
     <>
-    <div className='bg-white mr-2'>
+      <div className='w-auto  overflow-auto overflow-y-scroll'>
         <nav className='w-full bg-transparent'>
             <div className='flex justify-cente h-20 bg-transparent'>
                 <div className='w-full p-8 bg-white bg-transparent'>
@@ -36,8 +36,8 @@ function LeftContainerProfile() {
             </div>
         </nav>
 
-        <div>
-           <div className='w-full bg-white-500 h-auto ml-2 border mb-2 p-5 flex flex-col items-center justify-center rounded border-gray-300 bg-white' style={{ overflow: 'auto', overflowY: 'scroll' }}>
+      <div className='overflow-y-scroll h-screen'>
+            <div className='w-full h-auto ml-2 border mb-2 p-5 flex flex-col items-center justify-center rounded border-gray-300 bg-white overflow-auto overflow-y-scroll' >
                 <div className='h-auto'>
                    {currentUser ?(
                     <img src={defaultUser} className='rounded-full w-20 h-20 ' />

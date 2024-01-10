@@ -40,6 +40,9 @@ const TransitionsGeneralModal = ({
         setSelectedLocation(location.description);
     };
 
+    console.log("values :", values)
+    console.log("currentUser :", currentUser)
+
     const submit = (e) => {
         e.preventDefault();
         dispatch(showLoading());

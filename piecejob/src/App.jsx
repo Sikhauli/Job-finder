@@ -27,7 +27,7 @@ function App() {
 
   return (
     <Router>
-      <div className='w-full'>
+      <div className='overflow-hidde'>
           <Routes>
           <Route path='/' element={<Home />} />
           <Route path='/profile' element={<Profile />} />

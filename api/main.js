@@ -23,7 +23,7 @@ app.use(cookieParser());
 app.disable('x-powered-by');
 
 // origin: 'https://job-finder-bhg5.onrender.com',
-
+// origin: 'http://localhost:5173',
 
 const corsOptions = {
     origin: 'https://job-finder-bhg5.onrender.com',

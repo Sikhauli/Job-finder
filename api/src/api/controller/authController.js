@@ -75,7 +75,6 @@ const getUser = async (req, res) => {
             .findById(req.params.id)
             .populate('experiences') 
             .populate('education'); 
-
         if (!user) {
             return res.status(404).send({ error: 'User not found' });
         }
@@ -84,24 +83,6 @@ const getUser = async (req, res) => {
         res.status(500).send({ error: 'Internal server error' });
     }
 };
-
-// Controller function to update a user by ID
-// const updateUser = async (req, res) => {
-//     try {
-//         const existingUser = await User.findOne({ email: req.body.email });
-//         if (existingUser && existingUser._id.toString() !== req.params.id) {
-//             return res.status(400).send({ error: 'Email already exists for another user' });
-//         }
-
-//         const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
-//         if (!user) {
-//             return res.status(404).send({ error: 'User not found' });
-//         }
-//         res.send(user);
-//     } catch (error) {
-//         res.status(500).send({ error: 'Internal server error' });
-//     }
-// };
 
 const updateUser = async (req, res) => {
     try {
@@ -121,11 +102,6 @@ const updateUser = async (req, res) => {
     }
 };
 
-
-
-
-
-
 // Controller function to delete a user by ID
 const deleteUser = async (req, res) => {
     try {
@@ -138,7 +114,6 @@ const deleteUser = async (req, res) => {
         res.status(500).send({ error: 'Internal server error' });
     }
 };
-
 
 // Controller function to log out a user (single device)
 const logoutUser = async (req, res) => {

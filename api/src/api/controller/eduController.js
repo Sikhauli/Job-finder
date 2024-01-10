@@ -10,6 +10,7 @@ const addEdu = async (req, res) => {
         const savedEducation = await newEducation.save();
         res.status(201).json(savedEducation);
     } catch (error) {
+        console.error(error);
         res.status(500).json({ error: 'Failed to add education', message: error.message });
     }
 };
@@ -44,18 +45,6 @@ const updateEdu = async (req, res) => {
     }
 };
 
-// Delete Experience
-const deleteExp = async (req, res) => {
-    try {
-        const deletedExperience = await Experience.findByIdAndDelete(req.params.id);
-        if (!deletedExperience) {
-            return res.status(404).json({ message: 'Experience not found with the provided ID' });
-        }
-        res.status(200).json({ message: 'Experience deleted' });
-    } catch (error) {
-        res.status(500).json({ error: 'Failed to delete experience', message: error.message });
-    }
-};
 
 // Delete Education
 const deleteEdu = async (req, res) => {

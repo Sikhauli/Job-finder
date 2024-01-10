@@ -2,7 +2,8 @@ const {
     addEdu,
     getEdu,
     updateEdu,
-    deleteEdu
+    deleteEdu,
+    getEduId
 } = require("../controller/eduController");
 
 const { FILE_STORAGE_PATH } = require("../helpers/constants");
@@ -19,7 +20,7 @@ router.post(
 
 router.get('/:id', getEdu)
 
-router.patch('/', updateEdu);
+router.patch('/:id', updateEdu);
 
 router.delete('/:id', deleteEdu);
 

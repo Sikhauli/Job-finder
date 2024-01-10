@@ -25,7 +25,6 @@ function ViewJobs({ searchResults }) {
     const [filteredJobs, setFilteredJobs] = useState([]);
     const dispatch = useDispatch();
 
-    
     useEffect(() => {
         dispatch(showLoading());
         API.get(`${JOB_ENDPOINTS.get}`)
@@ -42,10 +41,10 @@ function ViewJobs({ searchResults }) {
     }, []);
 
     const handleJobClick = async (job) => {
+        dispatch(showLoading());
         setSelectedJob(job);
-        try {
-            dispatch(showLoading());
-            await API.post(`${JOB_ENDPOINTS.get}`, { jobId: job._id });
+        try {           
+            await API.post(`${JOB_ENDPOINTS.selection}`, { jobId: job._id });
         } catch (error) {
             enqueueSnackbar('Error updating selection count', { variant: 'error' });
         } finally {
@@ -54,13 +53,12 @@ function ViewJobs({ searchResults }) {
     };
 
     const handleSaveClick = async (jobId) => {
-        console.log("jobId :", jobId)
+        dispatch(showLoading());
         if(!currentUser){
             enqueueSnackbar('Login First to save Jobs', { variant: 'error' });
         }
         try {
-            dispatch(showLoading());
-            const response = await axios.post(`${API_BASE_URL}${SAVED_ENDPOINTS.add}`, {
+            const response = await API.post(`${SAVED_ENDPOINTS.add}`, {
                 jobId,
                 userId: currentUser._id
             });
@@ -104,12 +102,7 @@ function ViewJobs({ searchResults }) {
                                     {job.status}
                                 </p>
                             </div>
-                            <div className='flex items-center ml-auto'>
-                                <FaMoneyBillAlt className='mr-1' />
-                                <p className='text-gray-600 text-sm py-1 px-2 rounded'>
-                                    R{job.salary}
-                                </p>
-                            </div>
+                           
 
                         </div>
                         <div className='flex items-center mt-2'>
@@ -124,12 +117,7 @@ function ViewJobs({ searchResults }) {
                                 </p>
                             </div>
 
-                            <div className='flex items-center ml-auto'>
-                                <FaClock className='mr-1' />
-                                <p className='text-gray-600 text-sm py-1 px-1.5 rounded'>
-                                    {job.period}
-                                </p>
-                            </div>
+                            
                         </div>
 
                         <div className='flex items-center mt-2'>
@@ -138,7 +126,26 @@ function ViewJobs({ searchResults }) {
                                 <h5 className='text-sm'>{job.description}</h5>
                             </div>
 
-                            <button className='flex items-center ml-auto bg-blue-500 p-2 text-white rounded'
+                            
+                        </div>
+
+                        <div className='flex justify-center mt-4'>
+                            <div className='border-b-2 border-gray-300' style={{ width: '99%' }}></div>
+                        </div>
+                        <div className="flex mt-2">
+                            <div className='flex bg-gray-200 border border-blue-400 p-2 items-center mr-2'>
+                                <FaMoneyBillAlt className='mr-1' />
+                                <p className='text-gray-600 text-sm py-1 px-2 rounded'>
+                                    R{job.salary}
+                                </p>
+                            </div>
+                            <div className='flex bg-gray-200 border border-blue-400 p-2 items-center mr-2'>
+                                <FaClock className='mr-1' />
+                                <p className='text-gray-600 text-sm py-1 px-1.5 rounded'>
+                                    {job.period}
+                                </p>
+                            </div>
+                            <button className='flex bg-blue-500 border border-blue-400 p-2 items-center mr-2 rounded ml-auto'
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     handleSaveClick(job._id);
@@ -148,10 +155,7 @@ function ViewJobs({ searchResults }) {
                                 Save
                             </button>
                         </div>
-
-                        <div className='flex justify-center mt-4'>
-                            <div className='border-b-2 border-gray-300' style={{ width: '99%' }}></div>
-                        </div>
+                       
                     </div>
                 ))
             

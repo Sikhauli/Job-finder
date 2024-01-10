@@ -134,13 +134,13 @@ function Profile() {
                     setEdunum(educationData.length)
                 })
                 .catch((errors) => {
-                        enqueueSnackbar(getAxiosError(errors), { variant: "error" });
+                    console.log("Error :", getAxiosError(errors))
                 })
                 .finally(() => {
                     dispatch(hideLoading());
                 });
         }
-    }, [currentUser, enqueueSnackbar, expNum, eduNum]);
+    }, [currentUser, enqueueSnackbar, expNum, eduNum, dispatch]);
 
     const deleteExperience = (id) => {
         confirmAlert({
