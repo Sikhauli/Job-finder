@@ -1,7 +1,7 @@
 import axios from "axios";
 
-export const API_BASE_URL = 'https://jobs-finder-api-eg08.onrender.com/api/';
-// export const API_BASE_URL = 'http://localhost:1960/api/';
+// export const API_BASE_URL = 'https://jobs-finder-api-eg08.onrender.com/api/';
+export const API_BASE_URL = 'http://localhost:1960/api/';
 
 export const API = axios.create({
     baseURL: API_BASE_URL,
@@ -52,11 +52,12 @@ export const EDUCATION_ENDPOINTS = {
 export const JOB_ENDPOINTS = {
     get: "jobs",
     update: "jobs/",
-    delete: "jobs/",
+    deleteJob: "jobs/delete",
     add: "jobs/",
     apply: "jobs/apply",
     selection: "jobs/selection",
     save: "jobs/save",
+    editor: "jobs/editor"
 };
 
 export const SAVED_ENDPOINTS = {
@@ -65,6 +66,12 @@ export const SAVED_ENDPOINTS = {
     delete: "save",
     add: "save/",
     search: "save/search",
+};
+
+export const EDITOR_ENDPOINTS = {
+    get: "editor",
+    update: "editor/",
+    delete: "editor/",
 };
 
 export const getAxiosError = (error) => {

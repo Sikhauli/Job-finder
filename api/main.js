@@ -12,6 +12,7 @@ const authRoutes = require('./src/api/routes/authRoutes');
 const experienceRoutes = require('./src/api/routes/experienceRoutes')
 const educationRoutes = require('./src/api/routes/educationRoutes')
 const saveRoutes = require('./src/api/routes/saveRoutes')
+const editorRoutes = require('./src/api/routes/editorRoute')
 
 dotenv.config();
 
@@ -26,7 +27,6 @@ const corsOptions = {
     origin: process.env.NODE_ENV === 'production' ? 'https://job-finder-bhg5.onrender.com' : 'http://localhost:5173',
     credentials: true,
 };
-
 
 //cors middleware
 app.use(cors(corsOptions));
@@ -55,6 +55,7 @@ app.use("/api/jobs", jobsRoutes);
 app.use("/api/experience", experienceRoutes); 
 app.use("/api/education", educationRoutes);
 app.use("/api/save", saveRoutes);
+app.use("/api/editor", editorRoutes);
 
 
 

@@ -40,6 +40,8 @@ function ViewJobs({ searchResults }) {
             });
     }, []);
 
+console.log(currentUser)
+
     const handleJobClick = async (job) => {
         dispatch(showLoading());
         setSelectedJob(job);

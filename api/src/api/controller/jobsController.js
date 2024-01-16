@@ -155,6 +155,16 @@ const getSelection = async (req, res) => {
     }
 };
 
+const deleteSelection = async (req, res) => {
+    try {
+        const jobId = req.body.jobId;
+        await SelectedJob.findOneAndDelete({ jobId });
+        res.json({ message: 'Selection deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting selection:', error);
+        res.status(500).json({ message: 'An error occurred' });
+    }
+};
 
 const applyJob = async (req, res) => {
     try {
@@ -212,45 +222,6 @@ const suggestSkills = async (req, res) => {
 };
 
 
-// Get jobs by editor
-const getJobsByEditor = async (req, res) => {
-
-    console.log("getJobsByEditor yay")
-
-    try {
-        const userId = req.params.userId;
-        console.log("userId :", userId)
-        const jobs = await Job.find({ editor: userId });
-        res.status(200).json(jobs);
-    } catch (error) {
-        console.error('Error fetching jobs by editor:', error);
-        res.status(500).json({ message: 'An error occurred', error });
-    }
-};
-
-// Delete a job by its ID for a specific editor
-const deleteJobByEditorAndId = async (req, res) => {
-
-    console.log("deleteJobByEditorAndId yay")
-
-    try {
-        const editorId = req.params.userId;
-        const jobId = req.params.jobId;
-        console.log(editorId, " editor and jobId", jobId)
-        const deletedJob = await Job.findOneAndDelete({ editor: editorId, _id: jobId });
-
-        if (!deletedJob) {
-            return res.status(404).json({ message: 'Job not found for the specified editor and ID.' });
-        }
-
-        res.status(200).json({ message: 'Job deleted successfully.', deletedJob });
-    } catch (error) {
-        console.error('Error deleting job by editor and ID:', error);
-        res.status(500).json({ message: 'An error occurred', error });
-    }
-};
-
-
 module.exports = {
     postJob, 
     getJob,
@@ -264,6 +235,5 @@ module.exports = {
     selection,
     getSelection,
     applyJob,
-    getJobsByEditor,
-    deleteJobByEditorAndId
+    deleteSelection
 };

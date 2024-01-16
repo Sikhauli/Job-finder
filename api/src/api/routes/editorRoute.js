@@ -1,11 +1,11 @@
 const {
     getJobsByEditor,
     deleteJobByEditorAndId
-} = require("../controller/myJobsController");
+} = require("../controller/editorController");
 const authMiddleware = require("../middlewares/auth")
 const router = require("express").Router();
 
-router.get('/:userId', getJobsByEditor);
+router.get('/:editor', getJobsByEditor);
 
 router.delete('/:userId/:jobId', deleteJobByEditorAndId);
 

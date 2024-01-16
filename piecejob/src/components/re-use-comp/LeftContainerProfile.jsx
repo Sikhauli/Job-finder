@@ -76,7 +76,7 @@ function LeftContainerProfile() {
                       </p>
                       <div className='flex items-center ml-auto'>
                           <p className='text-gray-600 text-sm py-1 px-2 rounded'>
-                                1-2 years
+                                  {currentUser?.experience} years
                           </p>
                           </div>
                      </div>
@@ -102,7 +102,7 @@ function LeftContainerProfile() {
                       </p>
                       <div className='flex items-center ml-auto'>
                           <p className='text-gray-600 text-sm py-1 px-2 rounded'>
-                              2 years
+                                  {currentUser?.experience} years
                           </p>
                       </div>
                   </div>

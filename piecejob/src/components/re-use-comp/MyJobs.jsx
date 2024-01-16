@@ -7,7 +7,8 @@ import {
   API,
   getAxiosError,
   API_BASE_URL,
-  JOB_ENDPOINTS
+  JOB_ENDPOINTS,
+  EDITOR_ENDPOINTS
 } from "../../helpers/constants"
 import axios from 'axios';
 import logo from '../../assets/logo.jpeg';
@@ -27,84 +28,28 @@ const MyJobs = () => {
   const [data, setData] = useState([]);
   const currentUser = useSelector((state) => state.auth.currentUser);
   const [filteredData, setFilteredData] = useState([]);
-
+ 
   useEffect(() => {
-    const fetchMyJobs = async () => {
-      try {
-        dispatch(showLoading());
-        const response = await API.get(`${JOB_ENDPOINTS.save}`, {
-          params: {
-            userId: currentUser?._id,
-          },
-        });
-        const jobs = response.data;
-        setData(jobs);
-        setFilteredData(jobs);
-        console.log("My jobs", jobs)
-      } catch (error) {
-        console.error("Error fetching My jobs:");
-      }
-      finally {
-        dispatch(hideLoading());
-      }
-    };
-    fetchMyJobs();
-  }, []);
+    if (currentUser) {
+      dispatch(showLoading());
+      API.get(`${JOB_ENDPOINTS.get}/?userId=${currentUser._id}`)
+        .then((response) => {
+          const filteredJobs = response?.data.filter(job => job.editor === currentUser._id);
+          setData(filteredJobs);
+          setFilteredData(filteredJobs);
+        })
+        .catch((error) => {
+          enqueueSnackbar(getAxiosError(error), { variant: "error" });
+        })
+        .finally(() => dispatch(hideLoading()));
+    }
+  }, [dispatch, enqueueSnackbar, currentUser]);
 
-
-  // useEffect(() => {
-  //     dispatch(showLoading());
-  //     const config = {
-  //       headers: {
-  //         Authorization: `Bearer ${localStorage.getItem('authToken')}`,
-  //       },
-  //     };
-  //     API.get(`${JOB_ENDPOINTS.get}/editor/?userId=${currentUser._id}`, config)
-  //       .then((response) => {
-  //         setData(response?.data);
-  //       })
-  //       .catch((error) => {
-  //         enqueueSnackbar(getAxiosError(error), { variant: 'error' });
-  //       })
-  //       .finally(() => dispatch(hideLoading()));
-  // }, []);
-
-
-
-  // useEffect(() => {
-  //   if (currentUser) {
-  //     dispatch(showLoading());
-  //     API.get(`${JOB_ENDPOINTS.get}/editor/?userId=${currentUser._id}`)
-  //       .then((response) => {
-  //         setData(response?.data);
-  //       })
-  //       .catch((error) => {
-  //         enqueueSnackbar(getAxiosError(error), { variant: "error" });
-  //       })
-  //       .finally(() => dispatch(hideLoading()));
-  //   }
-  // }, []);
-
-  // useEffect(() => {
-  //   const fetchSavedJobs = async () => {
-  //     try {
-  //       dispatch(showLoading());
-  //       const response = await API.get(`${JOB_ENDPOINTS.get}/editor/?userId=${currentUser._id}`);
-  //       const jobs = response.data;
-  //       setData(jobs);
-  //       setFilteredData(jobs);
-  //     } catch (error) {
-  //       console.error("Error fetching saved jobs:");
-  //     }
-  //     finally {
-  //       dispatch(hideLoading());
-  //     }
-  //   };
-  //   fetchSavedJobs();
-  // }, []);
+  console.log("jobs :", filteredData)
 
   // for searching
   useEffect(() => {
+    dispatch(showLoading());
     if (keyword?.length && keyword?.length > 2) {
       const filteredResults = data.filter(
         (item) =>
@@ -115,10 +60,12 @@ const MyJobs = () => {
           item.period.toLowerCase().includes(keyword.toLowerCase())
       );
       setFilteredData(filteredResults);
+      dispatch(hideLoading())
     } else {
       setFilteredData(data);
+      dispatch(hideLoading())
     }
-  }, [keyword, data]);
+  }, [keyword, data, dispatch]);
 
   const onChange = (e) => {
     e.preventDefault();
@@ -134,19 +81,18 @@ const MyJobs = () => {
           label: "Confirm",
           onClick: () => {
             dispatch(showLoading());
-            setLoading(true);
-            API.delete(`${API_BASE_URL}${JOB_ENDPOINTS.delete}/${currentUser._id}/${jobId}`)
+            API.delete(`${JOB_ENDPOINTS.deleteJob}/${jobId}`)
               .then(() => {
                 enqueueSnackbar("Successfully deleted!", {
                   variant: "success",
                 });
+                return API.delete(`${JOB_ENDPOINTS.selection}/${jobId}`);
               })
               .catch((error) => {
                 enqueueSnackbar(getAxiosError(error), { variant: "error" });
               })
               .finally(() => {
                 dispatch(hideLoading());
-                setLoading(false);
               });
           },
         },
@@ -220,7 +166,6 @@ const MyJobs = () => {
       ],
     },
   ];
-
 
   return (
     <div className={``}>

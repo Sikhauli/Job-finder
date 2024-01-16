@@ -11,8 +11,7 @@ const {
    selection,
    getSelection,
    applyJob,
-   getJobsByEditor,
-   deleteJobByEditorAndId
+   deleteSelection
 
 } = require("../controller/jobsController");
 
@@ -28,7 +27,9 @@ router.post('/selection', selection)
 
 router.get('/selection', getSelection)
 
-router.delete("/all", authMiddleware, deleteJobs);
+router.delete('/selection/:id', deleteSelection);
+
+router.delete("/all", deleteJobs);
 
 router.get("/search", searchGetJobs);
 
@@ -38,16 +39,14 @@ router.post("/", postJob);
 
 router.get("/", getJobs);
 
-router.get("/:id", authMiddleware, getJob);
+router.get("/:id", getJob);
 
-router.delete("/:id", authMiddleware, deleteJob);
+// router.delete("/:id", deleteJob);
+router.delete('/delete/:id', deleteJob);
 
-router.patch("/:id", authMiddleware, updateJob);
+router.patch("/:id", updateJob);
 
 router.post("/apply", applyJob);
 
-router.get('editor/:userId', getJobsByEditor);
-
-router.delete('editor/:userId/:jobId', deleteJobByEditorAndId);
 
 module.exports = router;

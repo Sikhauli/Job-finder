@@ -114,7 +114,7 @@ function Profile() {
         } else {
             setExpandedGeneral(false);
         }
-    }, [expandedExperience, expandedCertification]);
+    }, [expandedExperience, expandedCertification, dispatch, enqueueSnackbar]);
 
     useEffect(() => {
         dispatch(showLoading());
