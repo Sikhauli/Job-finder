@@ -189,7 +189,7 @@ const MyJobs = () => {
           type="search"
         />
 
-        {currentUser && (
+       {/* {currentUser && (
           <button
             className={`h-11 w-32 rounded-xl bg-skin-fill-inverted text-white duration-300 ease-in-out hover:drop-shadow-2xl`}
             onClick={() => setShowModal(true)}
@@ -197,6 +197,7 @@ const MyJobs = () => {
             Add Vehicle
           </button>
         )}
+       */}
       </div>
 
       <div

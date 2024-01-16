@@ -191,7 +191,7 @@ const SavedJobs = () => {
           type="search"
         />
 
-        {currentUser && (
+        {/* {currentUser && (
           <button
             className={`h-11 w-32 rounded-xl bg-skin-fill-inverted text-white duration-300 ease-in-out hover:drop-shadow-2xl`}
             onClick={() => setShowModal(true)}
@@ -199,6 +199,9 @@ const SavedJobs = () => {
             Add Vehicle
           </button>
         )}
+       */}
+
+
       </div>
 
       <div
@@ -226,8 +229,9 @@ const SavedJobs = () => {
           }}
           pageSizeOptions={[10]}
           className={`capitalize`}
-          // processRowUpdate={editVehicle}
+        // processRowUpdate={editVehicle}
         />
+
       </div>
     </div>
   );
