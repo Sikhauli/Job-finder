@@ -25,7 +25,7 @@ API.interceptors.request.use(
 export const AUTH_ENDPOINTS = {
     login: "user/login",
     logout: "user/logout",
-    register: "/user/register",
+    register: "user/register",
 };
 
 export const USER_ENDPOINTS = {

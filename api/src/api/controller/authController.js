@@ -22,9 +22,12 @@ const registerUser = async (req, res) => {
         res.cookie('token', token, { httpOnly: true });
         res.status(201).send({ user, token });
     } catch (error) {
+        console.error('Registration error:', error);
         res.status(400).send({ error: 'Registration failed' });
     }
 };
+
+
 
 const findByCredentials = async (email, password) => {
     try {
