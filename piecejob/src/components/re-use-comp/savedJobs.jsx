@@ -38,6 +38,7 @@ const SavedJobs = () => {
           },
         });
         const formattedData = response.data.map(item => ({ ...item.jobId, id: item._id }));
+        console.log(JSON.stringify(formattedData))
         setData(formattedData);
         setFilteredData(formattedData);
       } catch (error) {
@@ -48,7 +49,7 @@ const SavedJobs = () => {
       }
     };
     fetchSavedJobs();
-  }, []);
+  }, [dispatch, enqueueSnackbar, currentUser]);
 
   // for searching
   useEffect(() => {
@@ -190,18 +191,6 @@ const SavedJobs = () => {
           placeholder="Search by keyword..."
           type="search"
         />
-
-        {/* {currentUser && (
-          <button
-            className={`h-11 w-32 rounded-xl bg-skin-fill-inverted text-white duration-300 ease-in-out hover:drop-shadow-2xl`}
-            onClick={() => setShowModal(true)}
-          >
-            Add Vehicle
-          </button>
-        )}
-       */}
-
-
       </div>
 
       <div
