@@ -173,7 +173,7 @@ we believe it is more efficient to use dashboard apps on devices with bigger scr
   }
 
   body::after {
-    content: "Until now We discourage using our dashboard webapps in smaller devices. We believe it is more efficient to use dashboard apps on devices with bigger screens. The minimum width size of your device should be at least 640px.";
+    content: "We are currently working on optimizing our web apps for smaller devices, including mobile phones with screens under 640 pixels. Stay tuned for an improved experience coming soon! Thank you for your patience.";
     display: flex;
     align-items: center;
     justify-content: center;
