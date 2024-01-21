@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react'
 import defaultUser from '../../assets/user.png';
+import edu from '../../assets/education.png';
 import deg from '../../assets/education.rep.png';
 import TransitionsExperienceModal from "../modal/addExperience" 
 import TransitionsGeneralModal from "../modal/genaralModal" 
@@ -16,20 +17,19 @@ import {
     getAxiosError,
     API_BASE_URL,
 } from "../../helpers/constants"
+import axios from 'axios';
 import { hideLoading, showLoading } from "../redux/loadingslice";
 import { useDispatch, useSelector } from "react-redux";
 import { IoBriefcaseOutline } from "react-icons/io5";
 
 import { SlGraduation } from "react-icons/sl";
 import { BsPersonWorkspace } from "react-icons/bs";
-import { CiEdit } from "react-icons/ci";
-import { FaPhoneAlt } from "react-icons/fa";
-
+import { TiEdit } from "react-icons/ti";
 
 import { useSnackbar } from "notistack";
+import { useNavigate } from 'react-router-dom';
+import { MdMailOutline } from "react-icons/md"; 
 import { TiDeleteOutline } from "react-icons/ti";
-import { MdOutlineMarkEmailRead } from "react-icons/md";
-
 
 // MUI imports
 import Card from '@mui/material/Card';
@@ -66,11 +66,14 @@ const ExpandMore = styled((props) => {
 
 function Profile() {
 
+    const navigate = useNavigate();
     const dispatch = useDispatch();
     const currentUser = useSelector((state) => state.auth.currentUser);
     const [expandedExperience, setExpandedExperience] = useState(false);
     const [expandedGeneral, setExpandedGeneral] = useState(true);
     const [expandedCertification, setExpandedCertification] = useState(false);
+    const [tags, setTags] = useState([]);
+    const [newTag, setNewTag] = useState('');
     const [showModal, setShowModal] = useState(false);
     const [displayModal, setDisplayModal] = useState(false);
     const [jobModal, setJobModal] = useState(false);
@@ -81,6 +84,17 @@ function Profile() {
     const [expNum, setExpNum] = useState(0)
     const [educationData, setEducationData] = useState([])
     const [eduNum, setEdunum] = useState(0)
+
+    const handleAddTag = () => {
+        if (newTag.trim() !== '' && !tags.includes(newTag)) {
+            setTags([...tags, newTag]);
+            setNewTag('');
+        }
+    };
+
+    const handleDeleteTag = (tagToDelete) => {
+        setTags(tags.filter((tag) => tag !== tagToDelete));
+    };
 
     const handleExpandClickCertification = () => {
         setExpandedCertification(!expandedCertification);
@@ -252,83 +266,76 @@ function Profile() {
     
     ];
 
-    console.log(currentUser)
-
   return (
 
       <div className='h-screen overflow-hidden w-full grid grid-cols-3 p-5 bg-gradient-to-r from-gray-100 to-sky-00'>
-          <Card className='col-span-1 p-4 mr-8 h-screen '>
-              <div className='rounded-md w-fit ml-auto' onClick={() => setAboutModal(true)}>
-                  <CiEdit />
-              </div>
-            <div className='' >
-                  <div className='w-full h-auto flex flex-col items-center justify-center rounded bg-transparent border-none'>
+          <Card className='col-span-1 p-2 mr-8 h-screen'>
+
+          
+              <div className='' >
+                   <div className='w-full h-auto flex flex-col items-center justify-center rounded' style={{ backgroundColor: 'transparent', border: 'none' }}>
                       <div className='h-auto'>
-                          <img src={defaultUser} className='rounded-full w-12 h-12 ' />
+                         <img src={defaultUser} className='rounded-full w-20 h-20 ' />
                       </div>
-                      <div className='h-auto text-gray-500'>
-                          <p className='text-sm text-center'>{currentUser?.username} {currentUser?.lastname}</p>
-                          <p className='text-xs text-center'>{currentUser?.position}</p>
+                      <div className='h-auto mt-2 mb-5 text-center text-gray-500'>
+                          <p className='text-sm'>{currentUser?.username} {currentUser?.lastname}</p>
+                          <p className='text-xs'>{currentUser?.position}</p>
                       </div>
-                  </div>
-              </div>  
-              
+                   </div>
+              </div>
               <div className='mb-1' >
+                  <div className='rounded-xl w-fit ml-auto' onClick={() => setAboutModal(true)}>
+                      <TiEdit />
+                  </div>
                   <CardContent>
-                      <Typography color="text.secondary" className="text-center text-xs">
-                          <p className="text-xs">
-                              {currentUser?.about ?? "Tell us a bit about yourself here "}
-                          </p>
+                      <Typography color="text.secondary" className="text-center text-sm">
+                        <p className="text-xs">
+                          {currentUser?.about ?? "Tell us a bit about yourself here "}
+                        </p>
                       </Typography>
                   </CardContent>
-            </div>
-
-
-              <div className="flex flex-col space-y-2 ">
-                  <div className="flex">
-                      <div className="text-gray-600">
-                         Most Recent Job :
-                      </div>
-                      <div className="ml-auto">
-                          {currentUser?.position}
-                      </div>
-                  </div>
-                  <div className="flex">
-                      <div className="text-gray-600">
-                         Last Qualification :
-                      </div>
-                      <div className="ml-auto">
-                          {educationData[0]?.degree}
-                      </div>
-                  </div>
-                  <div className="flex">
-                      <div className="text-gray-600">
-                         Work Experience :
-                      </div>
-                      <div className="ml-auto">
-                          {currentUser?.experience} Years
-                      </div>
-                  </div>
               </div>
 
-              <div className="flex mt-6">
-                  <div className="text-gray-600 mt-1 mr-2">
-                      <FaPhoneAlt />
+              <Card className='mt-1 p-2 overflow-auto overflow-y-scroll' style={{ backgroundColor: 'transparent', border: 'none' }}>
+                  <Typography gutterBottom variant="h6" component="div" >
+                      <p className='text-gray-400'>SKILLS</p>
+                  </Typography>
+              <div className='grid row'>
+                  <div>
+                      {tags.map((tag, index) => (
+                        <Chip
+                            key={index}
+                            label={tag}
+                            onDelete={() => handleDeleteTag(tag)}
+                            color="primary"
+                            variant="outlined"
+                            style={{ margin: '2px' }}
+                        />
+                      ))}
                   </div>
-                  <div className="">
-                      {currentUser?.phone}
-                  </div>
+                      <div className='flex flex-col mt-2'>
+                      <TextField
+                        id="outlined-multiline-static"
+                        multiline
+                        rows={2}
+                        defaultValue="Small"
+                        size="small"
+                        label="Add Skills Tag"
+                        value={newTag}
+                        onChange={(e) => setNewTag(e.target.value)}
+                        className=''
+                      />
+                        <div className='mb-2'></div>
+                      <Button
+                          variant="contained"
+                          color="primary"
+                          onClick={handleAddTag}
+                      >
+                          Add
+                      </Button>
+                </div>
               </div>
-
-              <div className="flex">
-                  <div className="text-gray-600 mt-1 mr-2">
-                      <MdOutlineMarkEmailRead />
-                  </div>
-                  <div className="">
-                      {currentUser?.email}
-                  </div>
-              </div>
-              
+            </Card>
           </Card>
 
           <div className='col-span-2 overflow-auto bg-transparent h-screen' >
@@ -341,7 +348,7 @@ function Profile() {
                         onClick={() => setGeneralModal(true)}
                         aria-label="show more"
                     >
-                          <CiEdit />
+                          <TiEdit />
                     </ExpandMore>
                 </CardActions>
                   <Divider component="div" role="presentation" /> 
@@ -568,3 +575,391 @@ function Profile() {
 }
 
 export default Profile
+
+
+{/*
+
+import React, {useState, useEffect} from 'react'
+import defaultUser from '../../assets/user.png';
+import deg from '../../assets/education.rep.png';
+import TransitionsExperienceModal from "../modal/addExperience"
+import TransitionsGeneralModal from "../modal/genaralModal"
+import TransitionsEducationModal from '../modal/addEducation'
+import TransitionsAboutModal from '../modal/addAbout'
+import TransitionsJobModal from '../modal/addJob'
+import { confirmAlert } from "react-confirm-alert";
+import "react-confirm-alert/src/react-confirm-alert.css";
+import { LuUpload } from "react-icons/lu";
+import {
+    API,
+    EXPERIENCE_ENDPOINTS,
+    EDUCATION_ENDPOINTS,
+    getAxiosError,
+    API_BASE_URL,
+} from "../../helpers/constants"
+import { hideLoading, showLoading } from "../redux/loadingslice";
+import { useDispatch, useSelector } from "react-redux";
+import { IoBriefcaseOutline } from "react-icons/io5";
+
+import { SlGraduation } from "react-icons/sl";
+import { BsPersonWorkspace } from "react-icons/bs";
+import { CiEdit } from "react-icons/ci";
+import { FaPhoneAlt } from "react-icons/fa";
+
+
+import { useSnackbar } from "notistack";
+import { TiDeleteOutline } from "react-icons/ti";
+import { MdOutlineMarkEmailRead } from "react-icons/md";
+
+// MUI imports
+import Card from '@mui/material/Card';
+import CardActions from '@mui/material/CardActions';
+import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import Chip from '@mui/material/Chip';
+import TextField from '@mui/material/TextField'
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
+import Divider from '@mui/material/Divider';
+import { styled } from '@mui/material/styles';
+import Collapse from '@mui/material/Collapse';
+import { IconButton } from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import Avatar from '@mui/material/Avatar';
+import CardHeader from '@mui/material/CardHeader';
+
+const ExpandMore = styled((props) => {
+    const { expand, ...other } = props;
+    return <IconButton {...other} />;
+})(({ theme, expand }) => ({
+    transform: !expand ? 'rotate(0deg)' : 'rotate(180deg)',
+    marginLeft: 'auto',
+    transition: theme.transitions.create('transform', {
+        duration: theme.transitions.duration.shortest,
+    }),
+}));
+
+function Profile() {
+
+    const dispatch = useDispatch();
+    const currentUser = useSelector((state) => state.auth.currentUser);
+    const [expandedExperience, setExpandedExperience] = useState(false);
+    const [expandedGeneral, setExpandedGeneral] = useState(true);
+    const [expandedCertification, setExpandedCertification] = useState(false);
+    const [showModal, setShowModal] = useState(false);
+    const [displayModal, setDisplayModal] = useState(false);
+    const [jobModal, setJobModal] = useState(false);
+    const [generalModal, setGeneralModal] = useState(false);
+    const [aboutModal, setAboutModal] = useState(false);
+    const { enqueueSnackbar } = useSnackbar();
+    const [experienceData, setExperienceData] = useState([])
+    const [expNum, setExpNum] = useState(0)
+    const [educationData, setEducationData] = useState([])
+    const [eduNum, setEdunum] = useState(0)
+
+    const handleExpandClickCertification = () => {
+        setExpandedCertification(!expandedCertification);
+        setExpandedExperience(false);
+        setExpandedGeneral(false)
+    };
+
+    const handleExpandClickExperience = () => {
+        setExpandedExperience(!expandedExperience);
+        setExpandedCertification(false);
+        setExpandedGeneral(false)
+    };
+
+    useEffect(() => {
+        if (!expandedExperience && !expandedCertification) {
+            setExpandedGeneral(true);
+        } else {
+            setExpandedGeneral(false);
+        }
+    }, [expandedExperience, expandedCertification, dispatch, enqueueSnackbar]);
+
+    useEffect(() => {
+        dispatch(showLoading());
+        if (currentUser) {
+            const experienceApi = API.get(`${EXPERIENCE_ENDPOINTS.get}${currentUser._id}`);
+            const educationApi = API.get(`${EDUCATION_ENDPOINTS.get}${currentUser._id}`);
+
+            Promise.all([experienceApi, educationApi])
+                .then((responses) => {
+
+                    const experienceData = responses[0]?.data;
+                    const educationData = responses[1]?.data;
+
+                    setExperienceData(experienceData);
+                    setEducationData(educationData)
+                    setExpNum(experienceData.length)
+                    setEdunum(educationData.length)
+                })
+                .catch((errors) => {
+                    console.log("Error :", getAxiosError(errors))
+                })
+                .finally(() => {
+                    dispatch(hideLoading());
+                });
+        }
+    }, [currentUser, enqueueSnackbar, expNum, eduNum, dispatch]);
+
+    const deleteExperience = (id) => {
+        confirmAlert({
+            title: "Delete Experience",
+            message: "Are you sure you want to do this?",
+            buttons: [
+                {
+                    label: "Confirm",
+                    onClick: () => {
+                        dispatch(showLoading());
+                        API.delete(`${EXPERIENCE_ENDPOINTS.delete}${id}`)
+                            .then(() => {
+                                enqueueSnackbar("Experience Successfully deleted!", {
+                                    variant: "success",
+                                });
+                            })
+                            .catch((error) => {
+                                enqueueSnackbar(getAxiosError(error), { variant: "error" });
+                            })
+                            .finally(() => {
+                                dispatch(hideLoading());
+                            });
+                    },
+                },
+                {
+                    label: "Cancel",
+                    onClick: () => { },
+                },
+            ],
+        });
+    };
+
+
+    const deleteEducation = (id) => {
+        confirmAlert({
+            title: "Delete Education",
+            message: "Are you sure you want to do this?",
+            buttons: [
+                {
+                    label: "Confirm",
+                    onClick: () => {
+                        dispatch(showLoading());
+                        API.delete(`${EDUCATION_ENDPOINTS.delete}${id}`)
+                            .then(() => {
+                                enqueueSnackbar("Education Successfully deleted!", {
+                                    variant: "success",
+                                });
+                            })
+                            .catch((error) => {
+                                enqueueSnackbar(getAxiosError(error), { variant: "error" });
+                            })
+                        .finally(() => {
+                            dispatch(hideLoading());
+                        });
+                    },
+                },
+                {
+                    label: "Cancel",
+                    onClick: () => { },
+                },
+            ],
+        });
+    };
+
+
+    const FormRow = () => (
+        <>
+            {items.map((item) => (
+                <Grid key={item.name} item xs={4} >
+                    <Box className="p-2">
+                        <div className="">
+                            <h5 className="text-xs font-semibold mb-2">{item.name}</h5>
+                            <p className="text-xs">{item.content}</p>
+                        </div>
+                    </Box>
+                </Grid>
+            ))}
+        </>
+    );
+
+    function formatDate(dateString) {
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        return new Date(dateString).toLocaleDateString(undefined, options);
+    }
+
+    const items = [
+        {
+            name: "FIRSTNAME",
+            content: currentUser?.username
+        },
+        {
+            name: "LASTNAME",
+            content: currentUser?.lastname
+        },
+        {
+            name: "POSITION",
+            content: currentUser?.position
+        },
+        {
+            name: 'AGE',
+            content: `${currentUser?.age || ""} Years`
+        },
+        {
+            name: 'YEARS OF EXPERIENCE',
+            content: `${currentUser?.experience || ""} Years`
+        },
+        {
+            name: 'PHONE',
+            content:  currentUser?.phone
+        },
+        {
+            name: 'LOCATION',
+            content: currentUser?.location
+        },
+        {
+            name: 'EMAIL',
+            content: currentUser?.email
+        },
+        {
+            name: 'CTC',
+            content: "R " + (currentUser?.CTC || "")
+        },
+
+    ];
+
+    console.log(currentUser)
+
+  return (
+
+      <div className='h-screen overflow-hidden w-full grid grid-cols-3 p-5 bg-gradient-to-r from-gray-100 to-sky-00'>
+          <Card className='col-span-1 p-4 mr-8 h-screen '>
+              <div className='rounded-md w-fit ml-auto' onClick={() => setAboutModal(true)}>
+                  <CiEdit />
+              </div>
+            <div className='' >
+                  <div className='w-full h-auto flex flex-col items-center justify-center rounded bg-transparent border-none'>
+                      <div className='h-auto'>
+                          <img src={defaultUser} className='rounded-full w-12 h-12 ' />
+                      </div>
+                      <div className='h-auto text-gray-500'>
+                          <p className='text-sm text-center'>{currentUser?.username} {currentUser?.lastname}</p>
+                          <p className='text-xs text-center'>{currentUser?.position}</p>
+                      </div>
+                  </div>
+              </div>
+
+              <div className='mb-1' >
+                  <CardContent>
+                      <Typography color="text.secondary" className="text-center text-xs">
+                          <p className="text-xs">
+                              {currentUser?.about ?? "Tell us a bit about yourself here "}
+                          </p>
+                      </Typography>
+                  </CardContent>
+            </div>
+
+
+              <div className="flex flex-col space-y-2 ">
+                  <div className="flex">
+                      <div className="text-gray-600">
+                         Most Recent Job :
+                      </div>
+                      <div className="ml-auto">
+                          {currentUser?.position}
+                      </div>
+                  </div>
+                  <div className="flex">
+                      <div className="text-gray-600">
+                         Last Qualification :
+                      </div>
+                      <div className="ml-auto">
+                          {educationData[0]?.degree}
+                      </div>
+                  </div>
+                  <div className="flex">
+                      <div className="text-gray-600">
+                         Work Experience :
+                      </div>
+                      <div className="ml-auto">
+                          {currentUser?.experience} Years
+                      </div>
+                  </div>
+              </div>
+
+              <div className="flex mt-6">
+                  <div className="text-gray-600 mt-1 mr-2">
+                      <FaPhoneAlt />
+                  </div>
+                  <div className="">
+                      {currentUser?.phone}
+                  </div>
+              </div>
+
+              <div className="flex">
+                  <div className="text-gray-600 mt-1 mr-2">
+                      <MdOutlineMarkEmailRead />
+                  </div>
+                  <div className="">
+                      {currentUser?.email}
+                  </div>
+              </div>
+
+          </Card>
+
+          <div className='col-span-2 overflow-auto bg-transparent h-screen' >
+             <Card sx={{ width: '100%', marginBottom: '10px', padding: '10px' }}>
+                <CardActions disableSpacing>
+                    <Typography gutterBottom variant="h5" component="div">
+                        Basic Information
+                    </Typography>
+                    <ExpandMore
+                        onClick={() => setGeneralModal(true)}
+                        aria-label="show more"
+                    >
+                          <CiEdit />
+                    </ExpandMore>
+                </CardActions>
+                  <Divider component="div" role="presentation" />
+                  <Collapse in={expandedGeneral} timeout="auto" unmountOnExit>
+                    <CardContent>
+                          <Box sx={{ flexGrow: 1 }} >
+                              <Grid container spacing={1}>
+                                  <Grid container item spacing={1}>
+                                      <FormRow />
+                                  </Grid>
+                              </Grid>
+                              <div className='mt-6 space-x-6'>
+                                  <Button
+                                      startIcon={<LuUpload size={18} color="white" />}
+                                      variant="contained"
+                                      color="primary"
+                                      onClick={() => setAboutModal(true)}
+                                      className='mt-2  hover:bg-white hover:text-blue-500'
+                                  >
+                                      <p className='mt-1'> Upload CV</p>
+                                  </Button>
+
+                                  <Button
+                                      startIcon={<IoBriefcaseOutline size={18} />}
+                                      color="primary"
+                                      variant="outlined"
+                                      onClick={() => setJobModal(true)}
+                                      className='hover:text-gray-500'
+                                  >
+                                      <p className='mt-1'> POST Job</p>
+                                  </Button>
+                              </div>
+                          </Box>
+                    </CardContent>
+                </Collapse>
+            </Card>
+
+
+
+
+*/}
